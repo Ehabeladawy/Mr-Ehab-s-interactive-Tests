@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Ehab - Arctic Fox Adventure</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+    --primary: #6366f1; --purple-glow: #8b5cf6; --success: #10b981;
+    --danger: #ef4444; --bg-dark: #020617; --gold: #ffb142;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+body { background: var(--bg-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; position: relative; overflow-x: hidden; }
+
+#particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+.main-card { 
+    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); 
+    width: 100%; max-width: 850px; border-radius: 40px; 
+    border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 50px rgba(99, 102, 241, 0.2); 
+    overflow: hidden; position: relative; z-index: 2; margin: 20px 0;
+}
+
+.quiz-header { padding: 20px 40px; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* 1. إعادة لوجو 2 المتوهج والمتحرك للهيدر */
+.logo-container { 
+    width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--danger); 
+    overflow: hidden; background: #000; box-shadow: 0 0 15px var(--danger);
+    animation: glow-pulse 2s infinite ease-in-out;
+}
+@keyframes glow-pulse {
+    0% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+    50% { box-shadow: 0 0 25px var(--danger), 0 0 40px rgba(239, 68, 68, 0.4); transform: scale(1.05); }
+    100% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+}
+.logo-img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-text { text-align: left; }
+.header-text h1 { font-size: 1.4rem; font-weight: 900; color: white; }
+.animated-name {
+    background: linear-gradient(90deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #bf953f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-size: 200% auto; animation: shine 3s linear infinite; font-weight: 900; font-size: 1.1rem;
+}
+@keyframes shine { to { background-position: 200% center; } }
+
+/* 2. اللوجو الأوسط (بدون جلو) */
+.mid-logo {
+    width: 250px; margin-bottom: 25px;
+    /* تمت إزالة الـ drop-shadow */
+}
+
+/* إطار القطعة المتحرك متعدد الألوان */
+.passage-wrapper {
+    position: relative; padding: 3px; border-radius: 28px; margin-bottom: 30px;
+    background: linear-gradient(45deg, #ff0000, #ffb142, #6366f1, #d946ef, #ff0000);
+    background-size: 400% 400%; animation: gradientBorder 8s ease infinite;
+}
+@keyframes gradientBorder {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.passage-box { 
+    background: #0f172a; padding: 25px; border-radius: 25px; 
+    text-align: left; direction: ltr; line-height: 1.7; font-size: 1.15rem; color: #e2e8f0;
+}
+
+/* إطار السؤال الأحمر المتوهج */
+.question-row { 
+    background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 20px; 
+    margin-bottom: 20px; border: 2px solid var(--danger); 
+    box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.2), 0 0 15px rgba(239, 68, 68, 0.2);
+    direction: ltr; position: relative;
+}
+
+/* لوجو السؤال المتوهج الثابت */
+.q-logo {
+    width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--danger);
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #000; box-shadow: 0 0 12px var(--danger); margin-right: 15px;
+    vertical-align: middle;
+}
+.q-logo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+.question-text { font-size: 1.3rem; font-weight: 800; text-align: left; color: #f8fafc; display: inline-block; width: calc(100% - 70px); vertical-align: middle; }
+
+.options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 15px; direction: ltr; }
+
+.option-box { 
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
+    padding: 15px 20px; border-radius: 15px; cursor: pointer; font-weight: 700; font-size: 1.1rem; 
+    color: white; transition: 0.3s all; display: flex; align-items: center; gap: 10px;
+}
+.option-box:hover { background: rgba(99, 102, 241, 0.15); border-color: var(--primary); transform: scale(1.02); }
+
+.correct { background: var(--success) !important; border-color: #fff !important; }
+.wrong { background: var(--danger) !important; border-color: #fff !important; }
+
+.btn { 
+    background: linear-gradient(135deg, #4f46e5, #9333ea); color: white; padding: 16px 40px; 
+    border: none; border-radius: 18px; font-size: 1.25rem; font-weight: 800; cursor: pointer; 
+    margin: 15px; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px;
+}
+.scene { display: none; padding: 40px; text-align: center; }
+.active { display: block; animation: fadeIn 0.6s ease; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+input[type="text"] { width: 85%; padding: 20px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; text-align: center; font-size: 1.4rem; outline: none; margin-bottom: 30px; }
+</style>
+</head>
+<body>
+
+<canvas id="particles-js"></canvas>
+
+<div class="main-card" id="card">
+    <div class="quiz-header">
+        <div class="logo-container">
+            <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200" class="logo-img">
+        </div>
+        <div class="header-text">
+            <h1>Arctic Fox Adventure</h1>
+            <span class="animated-name">إعداد وبرمجة / أ. إيهاب العدوي</span>
+        </div>
+    </div>
+
+    <div id="welcome-scene" class="scene active">
+        <img src="https://drive.google.com/thumbnail?id=1cF-j-60otMztzK5ruWOGf02aem5WUG7R&sz=w600" class="mid-logo">
+        <h2 style="font-size: 1.9rem; margin-bottom: 25px; color: var(--gold);">مرحباً بك في تحدي القراءة!</h2>
+        <input type="text" id="studentName" placeholder="اكتب اسمك الثلاثي هنا">
+        <br>
+        <button class="btn" onclick="startQuiz()">ابدأ الاختبار الآن <i class="fa-solid fa-rocket"></i></button>
+    </div>
+
+    <div id="quiz-scene" class="scene">
+        <h2 style="color: var(--gold); margin-bottom: 20px; font-size: 1.6rem;">Read the Passage Carefully:</h2>
+        
+        <div class="passage-wrapper">
+            <div class="passage-box">
+                The Arctic fox is a small animal that lives in very cold places. It has thick white fur in winter, which provides warmth and camouflage in the snow. When summer comes, its fur changes to brown or gray to match the rocks and plants. The Arctic fox eats small animals, birds, and sometimes fish. It can survive in freezing weather because of its warm fur and strong sense of smell. These adaptations help it find food and stay safe from larger animals.
+            </div>
+        </div>
+        
+        <div id="quiz-content"></div>
+
+        <button class="btn" id="submitBtn" onclick="finishQuiz()" style="margin-top:40px; background:linear-gradient(135deg, var(--success), #065f46)">إنهاء الاختبار وعرض النتيجة <i class="fa-solid fa-flag-checkered"></i></button>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <h2 style="font-size: 2.2rem; margin-bottom: 30px; color: var(--gold);">كشف النتيجة</h2>
+        <div id="result-container" style="position:relative; width:100%; max-width:600px; margin: 0 auto 30px;"></div>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+            <button class="btn" onclick="toggleReview()" style="background:rgba(255,255,255,0.1)"><i class="fa-solid fa-magnifying-glass"></i> مراجعة الإجابات</button>
+            <button class="btn" onclick="location.reload()" style="background:rgba(255,255,255,0.05)"><i class="fa-solid fa-redo"></i> محاولة أخرى</button>
+        </div>
+        <div id="reviewArea" style="background: rgba(0,0,0,0.5); border-radius: 25px; padding: 30px; margin-top: 30px; text-align: center; display: none; border: 1px solid rgba(255,255,255,0.1);"></div>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    { q: "How does the Arctic fox’s fur help it survive in winter?", options: ["It attracts other foxes", "It provides warmth and camouflage", "It helps it run faster", "It makes it look beautiful"], correct: "It provides warmth and camouflage" },
+    { q: "What is a primary food source for the Arctic fox?", options: ["Plants and fruits", "Rocks and plants", "Small animals, birds, and fish", "Only large animals"], correct: "Small animals, birds, and fish" },
+    { q: "The Arctic fox changes its fur color to ________ .", options: ["Look more beautiful", "Keep its body dry", "Blend with its surroundings", "Attract other foxes"], correct: "Blend with its surroundings" },
+    { q: "The Arctic fox's strong sense of smell helps it ________ .", options: ["Find food", "Build a home", "Run faster", "Stay warm"], correct: "Find food" }
+];
+
+let studentAnswers = Array(quizData.length).fill(null);
+let score = 0, name = "";
+
+function startQuiz() {
+    name = document.getElementById('studentName').value.trim();
+    if(name.length < 3) return alert("من فضلك اكتب اسمك الثلاثي!");
+    showScene('quiz-scene');
+    renderQuiz();
+}
+
+function renderQuiz() {
+    const container = document.getElementById('quiz-content');
+    const logoUrl = "https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200";
+    
+    container.innerHTML = quizData.map((q, qIdx) => `
+        <div class="question-row">
+            <div>
+                <div class="q-logo"><img src="${logoUrl}"></div>
+                <div class="question-text">${qIdx + 1}. ${q.q}</div>
+            </div>
+            <div class="options-grid">
+                ${q.options.map((optText, oIdx) => `
+                    <div class="option-box" onclick="selectOption(${qIdx}, ${oIdx}, '${optText}')" id="q${qIdx}o${oIdx}">
+                        <i class="fa-regular fa-circle"></i>
+                        <span>${optText}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectOption(qIdx, oIdx, selectedText) {
+    studentAnswers[qIdx] = selectedText;
+    const opts = document.querySelectorAll(`[id^='q${qIdx}o']`);
+    opts.forEach(opt => {
+        opt.style.borderColor = "rgba(255,255,255,0.1)";
+        opt.style.background = "rgba(255,255,255,0.03)";
+        opt.querySelector('i').className = "fa-regular fa-circle";
+    });
+    const selectedDiv = document.getElementById(`q${qIdx}o${oIdx}`);
+    selectedDiv.style.borderColor = "var(--primary)";
+    selectedDiv.style.background = "rgba(99, 102, 241, 0.2)";
+    selectedDiv.querySelector('i').className = "fa-solid fa-circle-check";
+}
+
+function finishQuiz() {
+    if(studentAnswers.includes(null)) return alert("جاوب على كل الأسئلة أولاً!");
+    score = 0; let wrongs = [];
+    studentAnswers.forEach((ans, i) => {
+        if(ans === quizData[i].correct) score++; else wrongs.push({q: quizData[i].q, a: quizData[i].correct});
+    });
+    showScene('result-scene');
+    displayResult(wrongs);
+}
+
+function displayResult(wrongs) {
+    const percentage = (score / quizData.length) * 100;
+    const resContainer = document.getElementById('result-container');
+    const rev = document.getElementById('reviewArea');
+
+    if (percentage >= 50) {
+        confetti({ particleCount: 200, spread: 70 });
+        resContainer.innerHTML = `<img src="https://drive.google.com/thumbnail?id=1yHlVcO1402weXdOCm7Ao6v7cd0mmRffM&sz=w800" style="width:100%; border-radius:30px;"><div style="position:absolute; top:45%; left:50%; transform:translateX(-50%); color:#1e3a8a; font-size:1.8rem; font-weight:900; width:80%;">${name}</div><div style="position:absolute; top:60%; left:50%; transform:translateX(-50%); color:#dc2626; font-size:1.4rem; font-weight:900;">الدرجة: ${score} من ${quizData.length}</div>`;
+    } else {
+        resContainer.innerHTML = `<div style="padding:50px; border:3px solid var(--danger); border-radius:30px;"><h3 style="color: var(--danger);">تحتاج لتركيز أكثر!</h3><p>يا بطل ${name}، درجتك هي ${score} من ${quizData.length}.</p></div>`;
+    }
+
+    rev.innerHTML = wrongs.length === 0 ? `<h3 style="color:var(--success);">إجاباتك كاملة وصحيحة! 🌟</h3>` : wrongs.map(w => `<div style="margin:10px 0; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px; text-align:left;">Question: ${w.q}<br><span style="color:var(--success)">Correct: ${w.a}</span></div>`).join('');
+}
+
+function toggleReview() {
+    const r = document.getElementById('reviewArea');
+    r.style.display = (r.style.display === "none" || r.style.display === "") ? "block" : "none";
+}
+
+function showScene(id) {
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+// Background
+const canvas = document.getElementById('particles-js');
+const ctx = canvas.getContext('2d');
+let pts = [];
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+class P {
+    constructor() { this.reset(); }
+    reset() { this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2+1; this.vx=(Math.random()-0.5)*0.5; this.vy=(Math.random()-0.5)*0.5; }
+    update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height) this.reset(); }
+    draw() { ctx.fillStyle="rgba(139,92,246,0.3)"; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
+}
+for(let i=0;i<60;i++) pts.push(new P());
+function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); pts.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(animate); }
+animate();
+</script>
+</body>
+</html>
