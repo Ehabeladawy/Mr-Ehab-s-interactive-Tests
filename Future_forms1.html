@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Ehab - Future Forms Challenge</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+    --primary: #6366f1; --purple-glow: #8b5cf6; --success: #10b981;
+    --danger: #ef4444; --bg-dark: #020617; --gold: #ffb142;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+body { background: var(--bg-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; position: relative; overflow-x: hidden; }
+
+#particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+.main-card { 
+    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); 
+    width: 100%; max-width: 850px; border-radius: 40px; 
+    border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 50px rgba(99, 102, 241, 0.2); 
+    overflow: hidden; position: relative; z-index: 2; margin: 20px 0;
+}
+
+.quiz-header { padding: 20px 40px; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.logo-container { 
+    width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--danger); 
+    overflow: hidden; background: #000; box-shadow: 0 0 15px var(--danger);
+    animation: glow-pulse 2s infinite ease-in-out;
+}
+@keyframes glow-pulse {
+    0% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+    50% { box-shadow: 0 0 25px var(--danger), 0 0 40px rgba(239, 68, 68, 0.4); transform: scale(1.05); }
+    100% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+}
+.logo-img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-text { text-align: left; }
+.header-text h1 { font-size: 1.4rem; font-weight: 900; color: white; }
+.animated-name {
+    background: linear-gradient(90deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #bf953f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-size: 200% auto; animation: shine 3s linear infinite; font-weight: 900; font-size: 1.1rem;
+}
+@keyframes shine { to { background-position: 200% center; } }
+
+.scene { display: none; padding: 40px; text-align: center; }
+.active { display: block; animation: fadeIn 0.6s ease; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+input[type="text"] { width: 85%; padding: 20px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; text-align: center; font-size: 1.4rem; outline: none; margin-bottom: 30px; }
+
+.question-box { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: left; direction: ltr; }
+.question-text { font-size: 1.3rem; margin-bottom: 20px; font-weight: 700; color: var(--gold); }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.option-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; color: white; cursor: pointer; transition: 0.3s; font-size: 1.1rem; text-align: center; }
+.option-btn:hover { background: rgba(99, 102, 241, 0.2); border-color: var(--primary); }
+.option-btn.selected { background: var(--primary); border-color: white; transform: scale(1.02); }
+
+.btn { background: linear-gradient(135deg, #4f46e5, #9333ea); color: white; padding: 16px 40px; border: none; border-radius: 18px; font-size: 1.2rem; font-weight: 800; cursor: pointer; margin: 10px; transition: 0.3s; }
+
+.review-card { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 20px; margin-top: 15px; text-align: left; direction: ltr; border-left: 5px solid var(--success); }
+</style>
+</head>
+<body>
+
+<canvas id="particles-js"></canvas>
+
+<div class="main-card">
+    <div class="quiz-header">
+        <div class="logo-container">
+            <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200" class="logo-img">
+        </div>
+        <div class="header-text">
+            <h1>Future Forms Quiz</h1>
+            <span class="animated-name">إعداد وبرمجة / أ. إيهاب العدوي</span>
+        </div>
+    </div>
+
+    <div id="welcome-scene" class="scene active">
+        <img src="https://drive.google.com/thumbnail?id=1cF-j-60otMztzK5ruWOGf02aem5WUG7R&sz=w600" style="width:220px; margin-bottom:20px;">
+        <h2 style="color:var(--gold); margin-bottom:25px;">جاهز لتحدي أشكال المستقبل؟</h2>
+        <input type="text" id="studentName" placeholder="اكتب اسمك الثلاثي">
+        <br>
+        <button class="btn" onclick="startQuiz()">ابدأ الآن <i class="fa-solid fa-play"></i></button>
+    </div>
+
+    <div id="quiz-scene" class="scene">
+        <div id="question-container"></div>
+        <button class="btn" onclick="finishQuiz()" style="background:var(--success)">إنهاء وعرض النتيجة</button>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <div id="result-content"></div>
+        <div style="margin-top:30px;">
+            <button class="btn" onclick="showReview()" style="background:rgba(255,255,255,0.1)">مراجعة الأخطاء</button>
+            <button class="btn" onclick="location.reload()">محاولة أخرى</button>
+        </div>
+        <div id="review-area" style="display:none; margin-top:30px;"></div>
+    </div>
+</div>
+
+<script>
+const questions = [
+    { q: "Look at those black clouds! It _______ rain.", options: ["will", "is going to", "rains", "is raining"], correct: "is going to" },
+    { q: "The train _______ at 9:00 PM tonight.", options: ["leaves", "will leave", "is leaving", "going to leave"], correct: "leaves" },
+    { q: "I'm hungry. I think I _______ a sandwich.", options: ["make", "am making", "will make", "am going to make"], correct: "will make" },
+    { q: "We _______ a party next Friday. Everything is arranged.", options: ["have", "are having", "will have", "going to have"], correct: "are having" },
+    { q: "Watch out! You _______ that vase.", options: ["will break", "are going to break", "break", "breaking"], correct: "are going to break" },
+    { q: "My sister _______ 20 next Monday.", options: ["is being", "is going to be", "will be", "is"], correct: "will be" },
+    { q: "The film _______ at 7:30 as usual.", options: ["starts", "will start", "is starting", "going to start"], correct: "starts" },
+    { q: "I've decided. I _______ a new car next month.", options: ["will buy", "buy", "am going to buy", "am buying"], correct: "am going to buy" },
+    { q: "Don't worry, I _______ you with your homework.", options: ["help", "am helping", "will help", "going to help"], correct: "will help" },
+    { q: "They _______ to London tomorrow morning. They have the tickets.", options: ["fly", "will fly", "are flying", "flies"], correct: "are flying" }
+];
+
+let studentName = "";
+let studentAnswers = [];
+
+function startQuiz() {
+    studentName = document.getElementById('studentName').value.trim();
+    if(studentName.length < 3) return alert("اكتب اسمك أولاً!");
+    showScene('quiz-scene');
+    renderQuestions();
+}
+
+function renderQuestions() {
+    const container = document.getElementById('question-container');
+    container.innerHTML = questions.map((q, i) => `
+        <div class="question-box">
+            <p class="question-text">${i+1}. ${q.q}</p>
+            <div class="options-grid">
+                ${q.options.map(opt => `<button class="option-btn" onclick="selectOption(${i}, '${opt}', this)">${opt}</button>`).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectOption(qIdx, val, btn) {
+    studentAnswers[qIdx] = val;
+    const btns = btn.parentElement.querySelectorAll('.option-btn');
+    btns.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+}
+
+function finishQuiz() {
+    if(studentAnswers.filter(a => a).length < questions.length) return alert("أجب على جميع الأسئلة!");
+    
+    let score = 0;
+    questions.forEach((q, i) => { if(studentAnswers[i] === q.correct) score++; });
+
+    showScene('result-scene');
+    const resContent = document.getElementById('result-content');
+    
+    if(score >= questions.length / 2) {
+        confetti({ particleCount: 150, spread: 70 });
+        resContent.innerHTML = `
+            <div style="position:relative;">
+                <img src="https://drive.google.com/thumbnail?id=1yHlVcO1402weXdOCm7Ao6v7cd0mmRffM&sz=w800" style="width:100%; border-radius:30px;">
+                <div style="position:absolute; top:45%; left:50%; transform:translateX(-50%); color:#1e3a8a; font-size:1.8rem; font-weight:900; width:80%;">${studentName}</div>
+                <div style="position:absolute; top:60%; left:50%; transform:translateX(-50%); color:#dc2626; font-size:1.4rem; font-weight:900;">الدرجة: ${score} من ${questions.length}</div>
+            </div>`;
+    } else {
+        resContent.innerHTML = `<h2 style="color:var(--danger)">نأسف يا بطل - أعد الاختبار مرة أخرى</h2><p>درجتك: ${score} من ${questions.length}</p>`;
+    }
+    
+    window.finalScore = score;
+}
+
+function showReview() {
+    const area = document.getElementById('review-area');
+    area.style.display = 'block';
+    
+    if(window.finalScore === questions.length) {
+        area.innerHTML = `<h3 style="color:var(--gold)">أحسنت - لا يوجد لديك أخطاء 🌟</h3>`;
+    } else {
+        area.innerHTML = questions.map((q, i) => `
+            <div class="review-card">
+                <p><b>Question ${i+1}:</b> ${q.q}</p>
+                <p style="color:${studentAnswers[i] === q.correct ? 'var(--success)' : 'var(--danger)'}">Your Answer: ${studentAnswers[i]}</p>
+                <p style="color:var(--success)">Correct Answer: ${q.correct}</p>
+            </div>
+        `).join('');
+    }
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function showScene(id) {
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// Particles Background
+const canvas = document.getElementById('particles-js');
+const ctx = canvas.getContext('2d');
+let pts = [];
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+class P {
+    constructor() { this.reset(); }
+    reset() { this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*1.5; this.vx=(Math.random()-0.5)*0.5; this.vy=(Math.random()-0.5)*0.5; }
+    update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height) this.reset(); }
+    draw() { ctx.fillStyle="rgba(255,255,255,0.2)"; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
+}
+for(let i=0;i<50;i++) pts.push(new P());
+function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); pts.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(animate); }
+animate();
+</script>
+</body>
+</html>
