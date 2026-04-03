@@ -3,44 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FullTest4All - Scrollable Passage Edition</title>
+<title>FullTest4All - Natural Scroll Edition</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root { --p: #6366f1; --s: #10b981; --d: #ef4444; --bg: #020617; --g: #ffb142; }
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-body { background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; overflow-x: hidden; }
+body { background: var(--bg); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px; color: white; overflow-x: hidden; }
 #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-.container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 25px; width: 100%; max-width: 900px; z-index: 10; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
+.container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 25px; width: 100%; max-width: 850px; z-index: 10; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin-bottom: 20px; }
 .scene { display: none; animation: fadeIn 0.4s ease; }
 .scene.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
 .total-timer { font-size: 1.4rem; font-weight: 900; color: var(--g); background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 10px; }
 
-/* تصميم شريحة القطعة والأسئلة */
-.passage-container { background: rgba(0,0,0,0.4); border-radius: 15px; border: 1px solid var(--p); overflow: hidden; display: flex; flex-direction: column; max-height: 70vh; }
-.passage-text { padding: 20px; background: rgba(99, 102, 241, 0.1); border-bottom: 2px solid var(--p); line-height: 1.7; font-size: 1.05rem; direction: ltr; text-align: left; overflow-y: auto; max-height: 200px; }
-.questions-scroll { padding: 20px; overflow-y: auto; flex-grow: 1; scroll-behavior: smooth; }
-.q-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--p); }
-.q-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; direction: ltr; text-align: left; }
-.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; direction: ltr; }
-.opt { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
-.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
+/* تصميم القطعة الموحد بدون سكرول داخلي */
+.passage-full-view { background: rgba(0,0,0,0.3); border-radius: 15px; border: 1px solid var(--p); margin-bottom: 20px; }
+.passage-text { padding: 25px; line-height: 1.8; font-size: 1.1rem; direction: ltr; text-align: left; background: rgba(99, 102, 241, 0.05); border-bottom: 2px solid var(--p); color: #e2e8f0; }
+.questions-list { padding: 20px; }
+.q-item { background: rgba(255,255,255,0.03); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--p); transition: 0.3s; }
+.q-item:hover { background: rgba(255,255,255,0.06); }
+.q-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; direction: ltr; text-align: left; color: #fff; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; direction: ltr; }
+.opt { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.95rem; text-align: left; }
+.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
 
 /* السحب والافلات */
-.word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; justify-content: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; }
-.word { background: var(--p); padding: 6px 14px; border-radius: 6px; cursor: grab; font-weight: bold; }
-.drop-box { display: inline-block; min-width: 80px; height: 30px; border-bottom: 2px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.05); margin: 0 3px; border-radius: 4px; }
+.word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; }
+.word { background: var(--p); padding: 8px 16px; border-radius: 8px; cursor: grab; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.drop-box { display: inline-block; min-width: 90px; height: 32px; border-bottom: 2px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.05); margin: 0 4px; border-radius: 4px; }
 
-.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
-.nav-btn { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; font-size: 0.85rem; }
+.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
+.nav-btn { padding: 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; font-size: 0.9rem; }
 .btn-prev { background: #475569; }
 .btn-next { background: var(--p); }
 .btn-extra { background: rgba(255, 177, 66, 0.1); border: 1px solid var(--g); color: var(--g); }
-.submit-btn { width: 100%; margin-top: 15px; padding: 15px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--s), #059669); color: white; font-weight: 900; font-size: 1.1rem; cursor: pointer; display: none; }
-input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; }
-.class-btn { padding: 12px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 10px; }
+.submit-btn { width: 100%; margin-top: 15px; padding: 16px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--s), #059669); color: white; font-weight: 900; font-size: 1.2rem; cursor: pointer; display: none; }
+input[type="text"] { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; }
+.class-btn { padding: 14px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 10px; }
 .class-btn.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
 #cheat-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 10px 25px; border-radius: 50px; display: none; z-index: 1000; font-weight: bold; }
 </style>
@@ -51,23 +52,23 @@ input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 1p
 
 <div class="container" id="main-box">
     <div id="login-scene" class="scene active">
-        <h2 style="text-align:center; color:var(--g); margin-bottom:10px;">FullTest4All System</h2>
-        <p style="text-align:center; font-size:0.8rem; margin-bottom:20px; color:#aaa;">Programmed by Mr. Ehab Eladawy</p>
+        <h2 style="text-align:center; color:var(--g); margin-bottom:5px;">FullTest4All System</h2>
+        <p style="text-align:center; font-size:0.85rem; margin-bottom:20px; color:#aaa;">Programmed by Mr. Ehab Eladawy</p>
         <input type="text" id="studentName" placeholder="الاسم الرباعي للطالب..." autocomplete="off">
         <div class="class-btn" onclick="selectClass(this, 'ثالث أول عربي')">ثالث أول عربي</div>
         <div class="class-btn" onclick="selectClass(this, 'ثالث ثاني لغات')">ثالث ثاني لغات</div>
-        <button class="nav-btn btn-next" style="width:100%; margin-top:10px;" onclick="startExam()">دخول الاختبار <i class="fas fa-play"></i></button>
+        <button class="nav-btn btn-next" style="width:100%; margin-top:10px; padding:18px;" onclick="startExam()">ابدأ الاختبار الآن <i class="fas fa-rocket"></i></button>
     </div>
 
     <div id="exam-scene" class="scene">
         <div class="header">
-            <div id="info-display" style="font-size:0.8rem;"></div>
+            <div id="info-display" style="font-size:0.8rem; color:var(--p);"></div>
             <div id="totalTimer" class="total-timer">30:00</div>
         </div>
         <div id="exam-content"></div>
         <div class="nav-controls">
             <button class="nav-btn btn-prev" onclick="changeQ(-1)">السابق</button>
-            <button class="nav-btn btn-extra" onclick="deferQuestion()">تفويت</button>
+            <button class="nav-btn btn-extra" onclick="deferQuestion()">تأجيل</button>
             <button class="nav-btn btn-next" onclick="changeQ(1)">التالي</button>
         </div>
         <button id="finalSubmit" class="submit-btn" onclick="confirmFinish()">إرسال النتيجة النهائية <i class="fas fa-paper-plane"></i></button>
@@ -75,7 +76,7 @@ input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 1p
 
     <div id="result-scene" class="scene">
         <div id="result-summary" style="text-align:center;"></div>
-        <div id="review-area" style="margin-top:20px; max-height:400px; overflow-y:auto; display:none;"></div>
+        <div id="review-area" style="margin-top:20px; max-height:500px; overflow-y:auto; display:none; background:rgba(0,0,0,0.2); padding:15px; border-radius:15px;"></div>
     </div>
 </div>
 
@@ -87,7 +88,6 @@ let cur = 0; let totalSeconds = 1800;
 let examPages = []; let userAnswers = {};
 let isExamFinished = false; let isExamStarted = false; let cheatCount = 0;
 
-// الأسئلة (20 جرامر + شريحة القطعة + شريحة السحب)
 const grammarData = [
     { id:1, q: "Ancient Rome ________ a powerful empire long ago.", o: ["is", "was", "were", "been"], a: "was" },
     { id:2, q: "Gladiators ________ to fight in colosseums.", o: ["use", "used", "using", "uses"], a: "used" },
@@ -111,50 +111,54 @@ const grammarData = [
     { id:20, q: "The report ________ by the manager two hours ago.", o: ["written", "was written", "writes", "wrote"], a: "was written" }
 ];
 
-// شريحة القطعة المجمعة
 const passageSlide = {
-    type: 'passage-scroll',
-    text: "Ancient Rome was one of the most powerful empires in history. Life in Rome was centered around the Forum and the Colosseum where gladiators fought. Sports like chariot racing were extremely popular. Today, modern athletes focus on sportsmanship and fair play, which are values that started a long time ago. Winning is not everything; respecting your rival is what makes you a true champion.",
+    type: 'passage-natural',
+    text: "Ancient Rome was one of the most powerful empires in history. Life in Rome was centered around the Forum and the Colosseum where gladiators fought. Sports like chariot racing were extremely popular. Today, modern athletes focus on sportsmanship and fair play, which are values that started a long time ago. Winning is not everything; respecting your rival is what makes you a true champion. Professional trainers were hired to prepare fighters for the big games.",
     questions: [
         { id:21, q: "Gladiators were professional ________ in ancient Rome.", o: ["Fighters", "Teachers", "Farmers", "Doctors"], a: "Fighters" },
         { id:22, q: "Where did gladiators usually fight?", o: ["Colosseum", "Library", "School", "Hospital"], a: "Colosseum" },
         { id:23, q: "Chariot racing was a famous ________ in Rome.", o: ["Sport", "Food", "Book", "Cloth"], a: "Sport" },
         { id:24, q: "What should a true champion respect?", o: ["Money", "Rival", "Time", "Place"], a: "Rival" },
         { id:25, q: "Modern athletes focus on ________ play.", o: ["Bad", "Fair", "Fast", "Hard"], a: "Fair" },
-        { id:26, q: "The values of sportsmanship started ________.", o: ["Recently", "Long ago", "Tomorrow", "Next week"], a: "Long ago" }
+        { id:26, q: "Fighters were prepared by professional ________.", o: ["Trainers", "Kings", "Students", "Children"], a: "Trainers" }
     ]
 };
 
-// شريحة السحب المجمعة
 const dragSlide = {
     type: 'drag-all',
     words: ["Horse", "Honor", "Sword", "Focus"],
     a: { z27: "Horse", z28: "Honor", z29: "Sword", z30: "Focus" },
-    content: `A knight rode a <span class='drop-box' id='z27' ondrop='drop(event)' ondragover='allow(event)'></span>. He showed <span class='drop-box' id='z28' ondrop='drop(event)' ondragover='allow(event)'></span> to all. He fought with a sharp <span class='drop-box' id='z29' ondrop='drop(event)' ondragover='allow(event)'></span>. He had to <span class='drop-box' id='z30' ondrop='drop(event)' ondragover='allow(event)'></span> on the battle.`
+    content: `A brave knight rode a <span class='drop-box' id='z27' ondrop='drop(event)' ondragover='allow(event)'></span>. He always showed <span class='drop-box' id='z28' ondrop='drop(event)' ondragover='allow(event)'></span> to all people. In battles, he fought with a sharp <span class='drop-box' id='z29' ondrop='drop(event)' ondragover='allow(event)'></span>. He had to <span class='drop-box' id='z30' ondrop='drop(event)' ondragover='allow(event)'></span> on his enemy to win.`
 };
 
 function selectClass(el, name) { document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); student.class = name; }
 function startExam() { student.name = document.getElementById('studentName').value.trim(); if(student.name.length < 10 || !student.class) { alert("أدخل اسمك الرباعي كاملاً واختر فصلك."); return; } examPages = [...grammarData, passageSlide, dragSlide]; isExamStarted = true; showScene('exam-scene'); document.getElementById('info-display').innerText = student.name + " | " + student.class; render(); startTimer(); }
-function showScene(id) { document.querySelectorAll('.scene').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function showScene(id) { document.querySelectorAll('.scene').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
 
 function render() {
     const p = examPages[cur]; const box = document.getElementById('exam-content');
     let solved = countSolved();
-    let h = `<p style="color:var(--g); margin-bottom:10px; font-weight:bold;">التقدم: تم حل ${solved} من 30 نقطة</p>`;
+    let h = `<p style="color:var(--g); margin-bottom:12px; font-weight:bold; text-align:center;">Page ${cur+1} / ${examPages.length} (Solved: ${solved}/30)</p>`;
     
-    if(p.type === 'passage-scroll') {
-        h += `<div class="passage-container">
+    if(p.type === 'passage-natural') {
+        h += `<div class="passage-full-view">
                 <div class="passage-text">${p.text}</div>
-                <div class="questions-scroll">` + 
+                <div class="questions-list">` + 
                 p.questions.map(q => `<div class="q-item">
                     <div class="q-text">${q.q}</div>
                     <div class="options-grid">` + q.o.map(o => `<div class="opt ${userAnswers[q.id] === o ? 'selected' : ''}" onclick="save(${q.id},'${o}')">${o}</div>`).join('') + `</div>
                 </div>`).join('') + 
                 `</div></div>`;
     } else if(p.type === 'drag-all') {
-        h += `<div class="q-card"><div class="word-bank">` + p.words.map(w => `<div class="word" draggable="true" ondragstart="drag(event)" id="${w}">${w}</div>`).join('') + `</div><div class="passage-text" style="background:transparent; border:none; text-align:center;">${p.content}</div></div>`;
+        h += `<div class="q-card" style="padding:20px; background:rgba(0,0,0,0.2); border-radius:15px; border-right: 4px solid var(--p);">
+                <div class="word-bank">` + p.words.map(w => `<div class="word" draggable="true" ondragstart="drag(event)" id="${w}">${w}</div>`).join('') + `</div>
+                <div style="line-height:3.5; font-size:1.2rem; direction:ltr; text-align:left;">${p.content}</div>
+              </div>`;
     } else {
-        h += `<div class="q-card"><div class="q-text">${p.q}</div><div class="options-grid">` + p.o.map(o => `<div class="opt ${userAnswers[p.id] === o ? 'selected' : ''}" onclick="save(${p.id},'${o}')">${o}</div>`).join('') + `</div></div>`;
+        h += `<div class="q-card" style="padding:25px; background:rgba(0,0,0,0.2); border-radius:15px; border-right: 4px solid var(--p);">
+                <div class="q-text" style="font-size:1.3rem;">${p.q}</div>
+                <div class="options-grid">` + p.o.map(o => `<div class="opt ${userAnswers[p.id] === o ? 'selected' : ''}" onclick="save(${p.id},'${o}')">${o}</div>`).join('') + `</div>
+              </div>`;
     }
     
     box.innerHTML = h;
@@ -177,25 +181,20 @@ function allow(e) { e.preventDefault(); }
 function drag(e) { e.dataTransfer.setData("text", e.target.id); }
 function drop(e) { e.preventDefault(); let word = e.dataTransfer.getData("text"); e.target.innerText = word; userAnswers[e.target.id] = word; render(); }
 
-function confirmFinish() { if(confirm("هل انتهيت من جميع الأسئلة؟ سيتم إرسال درجتك الآن.")) finish(); }
+function confirmFinish() { if(confirm("هل تأكدت من جميع إجاباتك؟")) finish(); }
 
 function finish() {
     isExamFinished = true; let score = 0; let payload = { name: student.name, className: student.class, cheat: cheatCount };
-    
-    // تصحيح الجرامر والقطعة
-    const allMcqs = [...grammarData, ...passageSlide.questions];
-    allMcqs.forEach(q => {
+    [...grammarData, ...passageSlide.questions].forEach(q => {
         let ans = userAnswers[q.id] || "No Answer";
         payload["Q" + q.id] = ans;
         if(ans === q.a) score += 0.5;
     });
-    // تصحيح السحب
     for(let i=27; i<=30; i++) {
         let ans = userAnswers['z'+i] || "No Answer";
         payload["Q" + i] = ans;
         if(ans === dragSlide.a['z'+i]) score += 0.5;
     }
-    
     payload.totalScore = score.toFixed(1) + " / 15";
     fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
     showResultScreen(score);
@@ -203,12 +202,17 @@ function finish() {
 
 function showResultScreen(score) {
     showScene('result-scene');
-    document.getElementById('result-summary').innerHTML = `<h1 style="color:var(--s)">تم الإرسال بنجاح</h1><p style="font-size:3.5rem; font-weight:900;">${score.toFixed(1)} / 15</p><button class="nav-btn btn-next" onclick="toggleReview()">مراجعة الأخطاء</button>`;
-    let rh = "";
+    document.getElementById('result-summary').innerHTML = `
+        <h1 style="color:var(--s); margin-bottom:10px;">تم الإرسال بنجاح</h1>
+        <p style="font-size:1.2rem; color:#ccc;">الدرجة النهائية</p>
+        <p style="font-size:4rem; font-weight:900; color:var(--g); margin-bottom:20px;">${score.toFixed(1)} / 15</p>
+        <button class="nav-btn btn-next" style="width:100%; padding:18px;" onclick="toggleReview()">مراجعة الأخطاء</button>`;
+    
+    let rh = "<h3 style='margin:20px 0; color:var(--p);'>تفاصيل الأخطاء:</h3>";
     [...grammarData, ...passageSlide.questions].forEach(q => {
-        if(userAnswers[q.id] !== q.a) rh += `<div class="q-item" style="text-align:left; direction:ltr;"><b>Q${q.id}:</b> ${q.q}<br>Your: <span style="color:var(--d)">${userAnswers[q.id]}</span> | Correct: <span style="color:var(--s)">${q.a}</span></div>`;
+        if(userAnswers[q.id] !== q.a) rh += `<div class="q-item" style="text-align:left; direction:ltr;"><b>Q:</b> ${q.q}<br>Your: <span style="color:var(--d)">${userAnswers[q.id]||'No Answer'}</span> | Correct: <span style="color:var(--s)">${q.a}</span></div>`;
     });
-    document.getElementById('review-area').innerHTML = rh || "لا يوجد أخطاء!";
+    document.getElementById('review-area').innerHTML = rh || "ممتاز! لم تخطئ في أي سؤال.";
 }
 
 function toggleReview() { let a = document.getElementById('review-area'); a.style.display = (a.style.display==='none')?'block':'none'; }
