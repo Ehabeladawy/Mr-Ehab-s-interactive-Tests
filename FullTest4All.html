@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FullTest4All - Scrollable Passage Edition</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root { --p: #6366f1; --s: #10b981; --d: #ef4444; --bg: #020617; --g: #ffb142; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+body { background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; overflow-x: hidden; }
+#particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+.container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 25px; width: 100%; max-width: 900px; z-index: 10; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
+.scene { display: none; animation: fadeIn 0.4s ease; }
+.scene.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+.total-timer { font-size: 1.4rem; font-weight: 900; color: var(--g); background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 10px; }
+
+/* تصميم شريحة القطعة والأسئلة */
+.passage-container { background: rgba(0,0,0,0.4); border-radius: 15px; border: 1px solid var(--p); overflow: hidden; display: flex; flex-direction: column; max-height: 70vh; }
+.passage-text { padding: 20px; background: rgba(99, 102, 241, 0.1); border-bottom: 2px solid var(--p); line-height: 1.7; font-size: 1.05rem; direction: ltr; text-align: left; overflow-y: auto; max-height: 200px; }
+.questions-scroll { padding: 20px; overflow-y: auto; flex-grow: 1; scroll-behavior: smooth; }
+.q-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--p); }
+.q-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; direction: ltr; text-align: left; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; direction: ltr; }
+.opt { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
+
+/* السحب والافلات */
+.word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; justify-content: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; }
+.word { background: var(--p); padding: 6px 14px; border-radius: 6px; cursor: grab; font-weight: bold; }
+.drop-box { display: inline-block; min-width: 80px; height: 30px; border-bottom: 2px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.05); margin: 0 3px; border-radius: 4px; }
+
+.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
+.nav-btn { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; font-size: 0.85rem; }
+.btn-prev { background: #475569; }
+.btn-next { background: var(--p); }
+.btn-extra { background: rgba(255, 177, 66, 0.1); border: 1px solid var(--g); color: var(--g); }
+.submit-btn { width: 100%; margin-top: 15px; padding: 15px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--s), #059669); color: white; font-weight: 900; font-size: 1.1rem; cursor: pointer; display: none; }
+input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; }
+.class-btn { padding: 12px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 10px; }
+.class-btn.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
+#cheat-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 10px 25px; border-radius: 50px; display: none; z-index: 1000; font-weight: bold; }
+</style>
+</head>
+<body oncontextmenu="return false;">
+<canvas id="particles-js"></canvas>
+<div id="cheat-toast">⚠️ تنبيه: يرجى التركيز في صفحة الاختبار!</div>
+
+<div class="container" id="main-box">
+    <div id="login-scene" class="scene active">
+        <h2 style="text-align:center; color:var(--g); margin-bottom:10px;">FullTest4All System</h2>
+        <p style="text-align:center; font-size:0.8rem; margin-bottom:20px; color:#aaa;">Programmed by Mr. Ehab Eladawy</p>
+        <input type="text" id="studentName" placeholder="الاسم الرباعي للطالب..." autocomplete="off">
+        <div class="class-btn" onclick="selectClass(this, 'ثالث أول عربي')">ثالث أول عربي</div>
+        <div class="class-btn" onclick="selectClass(this, 'ثالث ثاني لغات')">ثالث ثاني لغات</div>
+        <button class="nav-btn btn-next" style="width:100%; margin-top:10px;" onclick="startExam()">دخول الاختبار <i class="fas fa-play"></i></button>
+    </div>
+
+    <div id="exam-scene" class="scene">
+        <div class="header">
+            <div id="info-display" style="font-size:0.8rem;"></div>
+            <div id="totalTimer" class="total-timer">30:00</div>
+        </div>
+        <div id="exam-content"></div>
+        <div class="nav-controls">
+            <button class="nav-btn btn-prev" onclick="changeQ(-1)">السابق</button>
+            <button class="nav-btn btn-extra" onclick="deferQuestion()">تفويت</button>
+            <button class="nav-btn btn-next" onclick="changeQ(1)">التالي</button>
+        </div>
+        <button id="finalSubmit" class="submit-btn" onclick="confirmFinish()">إرسال النتيجة النهائية <i class="fas fa-paper-plane"></i></button>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <div id="result-summary" style="text-align:center;"></div>
+        <div id="review-area" style="margin-top:20px; max-height:400px; overflow-y:auto; display:none;"></div>
+    </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycigTlJjqHJ2OhFH-cJRaC9sVLPgp4r2MJmTp9RHUeOJN2-LiE9J7kRSup6a6q5EkhcA/exec';
+
+let student = { name: '', class: '' };
+let cur = 0; let totalSeconds = 1800;
+let examPages = []; let userAnswers = {};
+let isExamFinished = false; let isExamStarted = false; let cheatCount = 0;
+
+// الأسئلة (20 جرامر + شريحة القطعة + شريحة السحب)
+const grammarData = [
+    { id:1, q: "Ancient Rome ________ a powerful empire long ago.", o: ["is", "was", "were", "been"], a: "was" },
+    { id:2, q: "Gladiators ________ to fight in colosseums.", o: ["use", "used", "using", "uses"], a: "used" },
+    { id:3, q: "English ________ by many people nowadays.", o: ["speaks", "is spoken", "is speaking", "spoke"], a: "is spoken" },
+    { id:4, q: "The pyramids ________ by the ancient Egyptians.", o: ["built", "were built", "are built", "building"], a: "were built" },
+    { id:5, q: "I have ________ finished my test, I'm waiting for the result.", o: ["already", "yet", "never", "ever"], a: "already" },
+    { id:6, q: "Have you ________ traveled to Luxor by train?", o: ["already", "yet", "never", "ever"], a: "ever" },
+    { id:7, q: "He ________ to play tennis, but now he plays football.", o: ["used to", "use to", "using to", "uses to"], a: "used to" },
+    { id:8, q: "The match ________ by millions of people yesterday.", o: ["watched", "was watched", "is watched", "watches"], a: "was watched" },
+    { id:9, q: "This is the boy ________ won the gold medal.", o: ["which", "who", "where", "whose"], a: "who" },
+    { id:10, q: "The house ________ I was born is in Tanta.", o: ["where", "which", "who", "whose"], a: "where" },
+    { id:11, q: "I haven't seen my friend ________ last month.", o: ["for", "since", "ago", "yet"], a: "since" },
+    { id:12, q: "They have lived in Riyadh ________ five years.", o: ["since", "for", "ago", "already"], a: "for" },
+    { id:13, q: "Did you ________ to have long hair when you were young?", o: ["use", "used", "uses", "using"], a: "use" },
+    { id:14, q: "Many books ________ in our school library every year.", o: ["added", "are added", "adding", "adds"], a: "are added" },
+    { id:15, q: "The phone ________ he bought is very expensive.", o: ["who", "which", "where", "whose"], a: "which" },
+    { id:16, q: "To get the opposite of 'regular', we use ________.", o: ["un-", "ir-", "dis-", "in-"], a: "ir-" },
+    { id:17, q: "He showed great ________ by not attacking his rival.", o: ["Strength", "Sportsmanship", "Speed", "Anger"], a: "Sportsmanship" },
+    { id:18, q: "Focusing ________ your studies is the key to success.", o: ["on", "at", "in", "with"], a: "on" },
+    { id:19, q: "The teacher ________ daughter is a doctor is very kind.", o: ["who", "which", "whose", "whom"], a: "whose" },
+    { id:20, q: "The report ________ by the manager two hours ago.", o: ["written", "was written", "writes", "wrote"], a: "was written" }
+];
+
+// شريحة القطعة المجمعة
+const passageSlide = {
+    type: 'passage-scroll',
+    text: "Ancient Rome was one of the most powerful empires in history. Life in Rome was centered around the Forum and the Colosseum where gladiators fought. Sports like chariot racing were extremely popular. Today, modern athletes focus on sportsmanship and fair play, which are values that started a long time ago. Winning is not everything; respecting your rival is what makes you a true champion.",
+    questions: [
+        { id:21, q: "Gladiators were professional ________ in ancient Rome.", o: ["Fighters", "Teachers", "Farmers", "Doctors"], a: "Fighters" },
+        { id:22, q: "Where did gladiators usually fight?", o: ["Colosseum", "Library", "School", "Hospital"], a: "Colosseum" },
+        { id:23, q: "Chariot racing was a famous ________ in Rome.", o: ["Sport", "Food", "Book", "Cloth"], a: "Sport" },
+        { id:24, q: "What should a true champion respect?", o: ["Money", "Rival", "Time", "Place"], a: "Rival" },
+        { id:25, q: "Modern athletes focus on ________ play.", o: ["Bad", "Fair", "Fast", "Hard"], a: "Fair" },
+        { id:26, q: "The values of sportsmanship started ________.", o: ["Recently", "Long ago", "Tomorrow", "Next week"], a: "Long ago" }
+    ]
+};
+
+// شريحة السحب المجمعة
+const dragSlide = {
+    type: 'drag-all',
+    words: ["Horse", "Honor", "Sword", "Focus"],
+    a: { z27: "Horse", z28: "Honor", z29: "Sword", z30: "Focus" },
+    content: `A knight rode a <span class='drop-box' id='z27' ondrop='drop(event)' ondragover='allow(event)'></span>. He showed <span class='drop-box' id='z28' ondrop='drop(event)' ondragover='allow(event)'></span> to all. He fought with a sharp <span class='drop-box' id='z29' ondrop='drop(event)' ondragover='allow(event)'></span>. He had to <span class='drop-box' id='z30' ondrop='drop(event)' ondragover='allow(event)'></span> on the battle.`
+};
+
+function selectClass(el, name) { document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); student.class = name; }
+function startExam() { student.name = document.getElementById('studentName').value.trim(); if(student.name.length < 10 || !student.class) { alert("أدخل اسمك الرباعي كاملاً واختر فصلك."); return; } examPages = [...grammarData, passageSlide, dragSlide]; isExamStarted = true; showScene('exam-scene'); document.getElementById('info-display').innerText = student.name + " | " + student.class; render(); startTimer(); }
+function showScene(id) { document.querySelectorAll('.scene').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+function render() {
+    const p = examPages[cur]; const box = document.getElementById('exam-content');
+    let solved = countSolved();
+    let h = `<p style="color:var(--g); margin-bottom:10px; font-weight:bold;">التقدم: تم حل ${solved} من 30 نقطة</p>`;
+    
+    if(p.type === 'passage-scroll') {
+        h += `<div class="passage-container">
+                <div class="passage-text">${p.text}</div>
+                <div class="questions-scroll">` + 
+                p.questions.map(q => `<div class="q-item">
+                    <div class="q-text">${q.q}</div>
+                    <div class="options-grid">` + q.o.map(o => `<div class="opt ${userAnswers[q.id] === o ? 'selected' : ''}" onclick="save(${q.id},'${o}')">${o}</div>`).join('') + `</div>
+                </div>`).join('') + 
+                `</div></div>`;
+    } else if(p.type === 'drag-all') {
+        h += `<div class="q-card"><div class="word-bank">` + p.words.map(w => `<div class="word" draggable="true" ondragstart="drag(event)" id="${w}">${w}</div>`).join('') + `</div><div class="passage-text" style="background:transparent; border:none; text-align:center;">${p.content}</div></div>`;
+    } else {
+        h += `<div class="q-card"><div class="q-text">${p.q}</div><div class="options-grid">` + p.o.map(o => `<div class="opt ${userAnswers[p.id] === o ? 'selected' : ''}" onclick="save(${p.id},'${o}')">${o}</div>`).join('') + `</div></div>`;
+    }
+    
+    box.innerHTML = h;
+    document.getElementById('finalSubmit').style.display = (solved >= 30) ? 'block' : 'none';
+    if(p.type === 'drag-all') Object.keys(p.a).forEach(zid => { if(userAnswers[zid]) document.getElementById(zid).innerText = userAnswers[zid]; });
+}
+
+function countSolved() {
+    let count = 0;
+    for(let i=1; i<=26; i++) if(userAnswers[i]) count++;
+    for(let i=27; i<=30; i++) if(userAnswers['z'+i]) count++;
+    return count;
+}
+
+function save(id, val) { userAnswers[id] = val; render(); }
+function changeQ(d) { cur += d; if(cur<0) cur=examPages.length-1; if(cur>=examPages.length) cur=0; render(); }
+function deferQuestion() { let p = examPages.splice(cur, 1)[0]; examPages.push(p); render(); }
+
+function allow(e) { e.preventDefault(); }
+function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+function drop(e) { e.preventDefault(); let word = e.dataTransfer.getData("text"); e.target.innerText = word; userAnswers[e.target.id] = word; render(); }
+
+function confirmFinish() { if(confirm("هل انتهيت من جميع الأسئلة؟ سيتم إرسال درجتك الآن.")) finish(); }
+
+function finish() {
+    isExamFinished = true; let score = 0; let payload = { name: student.name, className: student.class, cheat: cheatCount };
+    
+    // تصحيح الجرامر والقطعة
+    const allMcqs = [...grammarData, ...passageSlide.questions];
+    allMcqs.forEach(q => {
+        let ans = userAnswers[q.id] || "No Answer";
+        payload["Q" + q.id] = ans;
+        if(ans === q.a) score += 0.5;
+    });
+    // تصحيح السحب
+    for(let i=27; i<=30; i++) {
+        let ans = userAnswers['z'+i] || "No Answer";
+        payload["Q" + i] = ans;
+        if(ans === dragSlide.a['z'+i]) score += 0.5;
+    }
+    
+    payload.totalScore = score.toFixed(1) + " / 15";
+    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+    showResultScreen(score);
+}
+
+function showResultScreen(score) {
+    showScene('result-scene');
+    document.getElementById('result-summary').innerHTML = `<h1 style="color:var(--s)">تم الإرسال بنجاح</h1><p style="font-size:3.5rem; font-weight:900;">${score.toFixed(1)} / 15</p><button class="nav-btn btn-next" onclick="toggleReview()">مراجعة الأخطاء</button>`;
+    let rh = "";
+    [...grammarData, ...passageSlide.questions].forEach(q => {
+        if(userAnswers[q.id] !== q.a) rh += `<div class="q-item" style="text-align:left; direction:ltr;"><b>Q${q.id}:</b> ${q.q}<br>Your: <span style="color:var(--d)">${userAnswers[q.id]}</span> | Correct: <span style="color:var(--s)">${q.a}</span></div>`;
+    });
+    document.getElementById('review-area').innerHTML = rh || "لا يوجد أخطاء!";
+}
+
+function toggleReview() { let a = document.getElementById('review-area'); a.style.display = (a.style.display==='none')?'block':'none'; }
+function startTimer() { setInterval(() => { if(!isExamStarted || isExamFinished) return; totalSeconds--; let m=Math.floor(totalSeconds/60), s=totalSeconds%60; document.getElementById('totalTimer').innerText=`${m}:${s<10?'0'+s:s}`; if(totalSeconds<=0) finish(); }, 1000); }
+window.onblur = () => { if(isExamStarted && !isExamFinished) { cheatCount++; document.getElementById('cheat-toast').style.display='block'; setTimeout(()=>document.getElementById('cheat-toast').style.display='none',3000); } };
+
+const canvas = document.getElementById('particles-js'); const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+let pts = Array.from({length:30},()=>({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.5, vy:(Math.random()-0.5)*0.5}));
+function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(255,255,255,0.1)"; pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,1,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(anim); }
+anim();
+</script>
+</body>
+</html>
