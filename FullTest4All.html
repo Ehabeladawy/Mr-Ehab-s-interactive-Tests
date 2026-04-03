@@ -3,54 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FullTest4All - Natural Scroll Edition</title>
+<title>FullTest4All - Natural Page Scroll</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root { --p: #6366f1; --s: #10b981; --d: #ef4444; --bg: #020617; --g: #ffb142; }
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-body { background: var(--bg); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px; color: white; overflow-x: hidden; }
+body { 
+    background: var(--bg); 
+    min-height: 100vh; 
+    display: flex; 
+    align-items: flex-start; /* يبدأ من الأعلى للسماح بالسكرول الطبيعي */
+    justify-content: center; 
+    padding: 20px 10px; 
+    color: white; 
+    overflow-x: hidden;
+    user-select: none; /* منع تحديد النصوص لحماية الأسئلة */
+}
 #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-.container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 25px; width: 100%; max-width: 850px; z-index: 10; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin-bottom: 20px; }
+.container { 
+    background: rgba(255, 255, 255, 0.05); 
+    backdrop-filter: blur(20px); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 24px; 
+    padding: 25px; 
+    width: 100%; 
+    max-width: 850px; 
+    z-index: 10; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
 .scene { display: none; animation: fadeIn 0.4s ease; }
 .scene.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
 .total-timer { font-size: 1.4rem; font-weight: 900; color: var(--g); background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 10px; }
 
-/* تصميم القطعة الموحد بدون سكرول داخلي */
-.passage-full-view { background: rgba(0,0,0,0.3); border-radius: 15px; border: 1px solid var(--p); margin-bottom: 20px; }
-.passage-text { padding: 25px; line-height: 1.8; font-size: 1.1rem; direction: ltr; text-align: left; background: rgba(99, 102, 241, 0.05); border-bottom: 2px solid var(--p); color: #e2e8f0; }
-.questions-list { padding: 20px; }
-.q-item { background: rgba(255,255,255,0.03); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--p); transition: 0.3s; }
-.q-item:hover { background: rgba(255,255,255,0.06); }
-.q-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; direction: ltr; text-align: left; color: #fff; }
+/* تصميم القطعة والأسئلة بدون أي سكرول داخلي */
+.passage-wrapper { margin-bottom: 30px; }
+.passage-box { 
+    background: rgba(99, 102, 241, 0.1); 
+    padding: 25px; 
+    border-radius: 15px; 
+    border: 1px solid var(--p);
+    line-height: 1.8; 
+    font-size: 1.15rem; 
+    direction: ltr; 
+    text-align: left; 
+    margin-bottom: 25px;
+    color: #e2e8f0;
+}
+.q-item { 
+    background: rgba(255,255,255,0.03); 
+    padding: 20px; 
+    border-radius: 15px; 
+    margin-bottom: 20px; 
+    border-left: 5px solid var(--p); 
+}
+.q-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; direction: ltr; text-align: left; }
 .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; direction: ltr; }
-.opt { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.95rem; text-align: left; }
-.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+.opt { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s; text-align: left; }
+.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
 
-/* السحب والافلات */
+/* السحب والإفلات */
 .word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; }
-.word { background: var(--p); padding: 8px 16px; border-radius: 8px; cursor: grab; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-.drop-box { display: inline-block; min-width: 90px; height: 32px; border-bottom: 2px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.05); margin: 0 4px; border-radius: 4px; }
+.word { background: var(--p); padding: 8px 16px; border-radius: 8px; cursor: grab; font-weight: bold; }
+.drop-box { display: inline-block; min-width: 90px; height: 32px; border-bottom: 3px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.07); margin: 0 5px; border-radius: 4px; }
 
-.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
-.nav-btn { padding: 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; font-size: 0.9rem; }
+.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 20px; }
+.nav-btn { padding: 15px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
 .btn-prev { background: #475569; }
 .btn-next { background: var(--p); }
 .btn-extra { background: rgba(255, 177, 66, 0.1); border: 1px solid var(--g); color: var(--g); }
-.submit-btn { width: 100%; margin-top: 15px; padding: 16px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--s), #059669); color: white; font-weight: 900; font-size: 1.2rem; cursor: pointer; display: none; }
+.submit-btn { width: 100%; margin-top: 20px; padding: 18px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--s), #059669); color: white; font-weight: 900; font-size: 1.2rem; cursor: pointer; display: none; }
+
 input[type="text"] { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; }
-.class-btn { padding: 14px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 10px; }
+.class-btn { padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 10px; }
 .class-btn.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
-#cheat-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 10px 25px; border-radius: 50px; display: none; z-index: 1000; font-weight: bold; }
+#cheat-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 10px 25px; border-radius: 50px; display: none; z-index: 1000; font-weight: bold; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); }
 </style>
 </head>
 <body oncontextmenu="return false;">
 <canvas id="particles-js"></canvas>
 <div id="cheat-toast">⚠️ تنبيه: يرجى التركيز في صفحة الاختبار!</div>
 
-<div class="container" id="main-box">
+<div class="container">
     <div id="login-scene" class="scene active">
         <h2 style="text-align:center; color:var(--g); margin-bottom:5px;">FullTest4All System</h2>
         <p style="text-align:center; font-size:0.85rem; margin-bottom:20px; color:#aaa;">Programmed by Mr. Ehab Eladawy</p>
@@ -76,7 +115,7 @@ input[type="text"] { width: 100%; padding: 16px; border-radius: 12px; border: 1p
 
     <div id="result-scene" class="scene">
         <div id="result-summary" style="text-align:center;"></div>
-        <div id="review-area" style="margin-top:20px; max-height:500px; overflow-y:auto; display:none; background:rgba(0,0,0,0.2); padding:15px; border-radius:15px;"></div>
+        <div id="review-area" style="margin-top:20px; display:none; background:rgba(0,0,0,0.2); padding:15px; border-radius:15px;"></div>
     </div>
 </div>
 
@@ -138,24 +177,23 @@ function showScene(id) { document.querySelectorAll('.scene').forEach(s => s.clas
 function render() {
     const p = examPages[cur]; const box = document.getElementById('exam-content');
     let solved = countSolved();
-    let h = `<p style="color:var(--g); margin-bottom:12px; font-weight:bold; text-align:center;">Page ${cur+1} / ${examPages.length} (Solved: ${solved}/30)</p>`;
+    let h = `<p style="color:var(--g); margin-bottom:15px; font-weight:bold; text-align:center;">Page ${cur+1} of ${examPages.length} (Solved: ${solved}/30)</p>`;
     
     if(p.type === 'passage-natural') {
-        h += `<div class="passage-full-view">
-                <div class="passage-text">${p.text}</div>
-                <div class="questions-list">` + 
+        h += `<div class="passage-wrapper">
+                <div class="passage-box">${p.text}</div>` + 
                 p.questions.map(q => `<div class="q-item">
                     <div class="q-text">${q.q}</div>
                     <div class="options-grid">` + q.o.map(o => `<div class="opt ${userAnswers[q.id] === o ? 'selected' : ''}" onclick="save(${q.id},'${o}')">${o}</div>`).join('') + `</div>
                 </div>`).join('') + 
-                `</div></div>`;
+              `</div>`;
     } else if(p.type === 'drag-all') {
-        h += `<div class="q-card" style="padding:20px; background:rgba(0,0,0,0.2); border-radius:15px; border-right: 4px solid var(--p);">
+        h += `<div class="q-item">
                 <div class="word-bank">` + p.words.map(w => `<div class="word" draggable="true" ondragstart="drag(event)" id="${w}">${w}</div>`).join('') + `</div>
-                <div style="line-height:3.5; font-size:1.2rem; direction:ltr; text-align:left;">${p.content}</div>
+                <div style="line-height:4; font-size:1.25rem; direction:ltr; text-align:left; color:#fff;">${p.content}</div>
               </div>`;
     } else {
-        h += `<div class="q-card" style="padding:25px; background:rgba(0,0,0,0.2); border-radius:15px; border-right: 4px solid var(--p);">
+        h += `<div class="q-item">
                 <div class="q-text" style="font-size:1.3rem;">${p.q}</div>
                 <div class="options-grid">` + p.o.map(o => `<div class="opt ${userAnswers[p.id] === o ? 'selected' : ''}" onclick="save(${p.id},'${o}')">${o}</div>`).join('') + `</div>
               </div>`;
@@ -164,6 +202,7 @@ function render() {
     box.innerHTML = h;
     document.getElementById('finalSubmit').style.display = (solved >= 30) ? 'block' : 'none';
     if(p.type === 'drag-all') Object.keys(p.a).forEach(zid => { if(userAnswers[zid]) document.getElementById(zid).innerText = userAnswers[zid]; });
+    window.scrollTo(0,0); // يعيد الصفحة للأعلى عند التنقل بين الصفحات
 }
 
 function countSolved() {
@@ -205,10 +244,10 @@ function showResultScreen(score) {
     document.getElementById('result-summary').innerHTML = `
         <h1 style="color:var(--s); margin-bottom:10px;">تم الإرسال بنجاح</h1>
         <p style="font-size:1.2rem; color:#ccc;">الدرجة النهائية</p>
-        <p style="font-size:4rem; font-weight:900; color:var(--g); margin-bottom:20px;">${score.toFixed(1)} / 15</p>
+        <p style="font-size:4.5rem; font-weight:900; color:var(--g); margin-bottom:20px;">${score.toFixed(1)} / 15</p>
         <button class="nav-btn btn-next" style="width:100%; padding:18px;" onclick="toggleReview()">مراجعة الأخطاء</button>`;
     
-    let rh = "<h3 style='margin:20px 0; color:var(--p);'>تفاصيل الأخطاء:</h3>";
+    let rh = "<h3 style='margin:25px 0; color:var(--p);'>تفاصيل الأخطاء:</h3>";
     [...grammarData, ...passageSlide.questions].forEach(q => {
         if(userAnswers[q.id] !== q.a) rh += `<div class="q-item" style="text-align:left; direction:ltr;"><b>Q:</b> ${q.q}<br>Your: <span style="color:var(--d)">${userAnswers[q.id]||'No Answer'}</span> | Correct: <span style="color:var(--s)">${q.a}</span></div>`;
     });
