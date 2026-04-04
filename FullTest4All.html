@@ -3,123 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FullTest4All - Natural Page Scroll</title>
+<title>FullTest4All - Mr. Ehab Eladawy</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root { --p: #6366f1; --s: #10b981; --d: #ef4444; --bg: #020617; --g: #ffb142; }
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-body { 
-    background: var(--bg); 
-    min-height: 100vh; 
-    display: flex; 
-    align-items: flex-start; /* يبدأ من الأعلى للسماح بالسكرول الطبيعي */
-    justify-content: center; 
-    padding: 20px 10px; 
-    color: white; 
-    overflow-x: hidden;
-    user-select: none; /* منع تحديد النصوص لحماية الأسئلة */
-}
+body { background: var(--bg); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 10px; color: white; overflow-x: hidden; }
+
 #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
 .container { 
-    background: rgba(255, 255, 255, 0.05); 
-    backdrop-filter: blur(20px); 
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(15px); 
     border: 1px solid rgba(255, 255, 255, 0.1); 
-    border-radius: 24px; 
-    padding: 25px; 
+    border-radius: 30px; 
+    padding: 30px; 
     width: 100%; 
-    max-width: 850px; 
+    max-width: 900px; 
     z-index: 10; 
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-    margin-top: 20px;
-    margin-bottom: 50px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.8); 
+    position: relative;
+    margin-top: 40px;
 }
-.scene { display: none; animation: fadeIn 0.4s ease; }
+
+/* تصميم اللوجو مع التوهج */
+.main-logo {
+    width: 150px;
+    height: auto;
+    filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8));
+    margin-bottom: 10px;
+    transition: 0.5s;
+}
+.main-logo:hover { transform: scale(1.05); filter: drop-shadow(0 0 25px var(--p)); }
+
+.header-logo {
+    width: 60px;
+    filter: drop-shadow(0 0 8px var(--g));
+    vertical-align: middle;
+}
+
+.scene { display: none; animation: slideIn 0.5s ease-out; }
 .scene.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
 
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-.total-timer { font-size: 1.4rem; font-weight: 900; color: var(--g); background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 10px; }
-
-/* تصميم القطعة والأسئلة بدون أي سكرول داخلي */
-.passage-wrapper { margin-bottom: 30px; }
-.passage-box { 
-    background: rgba(99, 102, 241, 0.1); 
+/* إطارات متحركة للأسئلة */
+.q-card { 
+    position: relative; 
+    background: rgba(0,0,0,0.4); 
+    border-radius: 20px; 
     padding: 25px; 
-    border-radius: 15px; 
-    border: 1px solid var(--p);
-    line-height: 1.8; 
-    font-size: 1.15rem; 
-    direction: ltr; 
-    text-align: left; 
     margin-bottom: 25px;
-    color: #e2e8f0;
+    border: 2px solid rgba(99, 102, 241, 0.2);
+    transition: 0.3s;
 }
-.q-item { 
-    background: rgba(255,255,255,0.03); 
-    padding: 20px; 
-    border-radius: 15px; 
-    margin-bottom: 20px; 
-    border-left: 5px solid var(--p); 
-}
-.q-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; direction: ltr; text-align: left; }
-.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; direction: ltr; }
-.opt { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s; text-align: left; }
-.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
+.q-card:hover { border-color: var(--p); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
 
-/* السحب والإفلات */
-.word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; }
-.word { background: var(--p); padding: 8px 16px; border-radius: 8px; cursor: grab; font-weight: bold; }
-.drop-box { display: inline-block; min-width: 90px; height: 32px; border-bottom: 3px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.07); margin: 0 5px; border-radius: 4px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.total-timer { font-size: 1.5rem; font-weight: 900; color: var(--g); background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--g); }
 
-.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 20px; }
-.nav-btn { padding: 15px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
-.btn-prev { background: #475569; }
-.btn-next { background: var(--p); }
-.btn-extra { background: rgba(255, 177, 66, 0.1); border: 1px solid var(--g); color: var(--g); }
-.submit-btn { width: 100%; margin-top: 20px; padding: 18px; border-radius: 15px; border: none; background: linear-gradient(135deg, var(--s), #059669); color: white; font-weight: 900; font-size: 1.2rem; cursor: pointer; display: none; }
+/* نظام التنبيهات */
+#cheat-warning-bar { position: fixed; top: 0; left: 0; width: 100%; background: var(--d); color: white; text-align: center; padding: 10px; font-weight: bold; z-index: 2000; display: none; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
+#cheat-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 15px 30px; border-radius: 50px; display: none; z-index: 2000; font-weight: bold; animation: shake 0.5s; }
+@keyframes shake { 0%, 100% { transform: translateX(-50%); } 25% { transform: translateX(-55%); } 75% { transform: translateX(-45%); } }
 
-input[type="text"] { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 15px; text-align: center; font-size: 1.1rem; outline: none; }
-.class-btn { padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 10px; }
-.class-btn.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); }
-#cheat-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 10px 25px; border-radius: 50px; display: none; z-index: 1000; font-weight: bold; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); }
+.instructions-list { text-align: right; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin: 20px 0; border-right: 4px solid var(--g); }
+.instructions-list li { margin-bottom: 12px; font-size: 0.95rem; line-height: 1.6; list-style: none; }
+.instructions-list i { color: var(--g); margin-left: 10px; }
+
+.passage-box { background: rgba(99, 102, 241, 0.1); padding: 25px; border-radius: 15px; border: 1px solid var(--p); line-height: 2; font-size: 1.2rem; direction: ltr; text-align: left; margin-bottom: 30px; color: #fff; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; direction: ltr; margin-top: 15px; }
+.opt { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; text-align: left; font-weight: bold; }
+.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); color: var(--s); box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+
+.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 25px; }
+.nav-btn { padding: 18px; border-radius: 15px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
+.btn-prev { background: #334155; }
+.btn-next { background: var(--p); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+.btn-extra { background: rgba(255, 177, 66, 0.1); border: 1.5px solid var(--g); color: var(--g); }
+.submit-btn { width: 100%; margin-top: 20px; padding: 20px; border-radius: 20px; border: none; background: linear-gradient(90deg, #10b981, #059669); color: white; font-weight: 900; font-size: 1.4rem; cursor: pointer; display: none; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); }
+
+input[type="text"] { width: 100%; padding: 20px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); color: white; margin-bottom: 20px; text-align: center; font-size: 1.2rem; outline: none; }
+.class-btn { padding: 18px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 12px; }
+.class-btn.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); transform: scale(1.02); }
+
+/* السحب والافلات */
+.drop-box { display: inline-block; min-width: 100px; height: 35px; border-bottom: 3px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.05); margin: 0 5px; }
+.word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; justify-content: center; }
+.word { background: var(--p); padding: 10px 20px; border-radius: 10px; cursor: grab; font-weight: bold; }
 </style>
 </head>
 <body oncontextmenu="return false;">
+
+<div id="cheat-warning-bar">⚠️ نظام المراقبة نشط.. اى محاولة للخروج سيتم إبلاغ المستر بها فوراً!</div>
+<div id="cheat-toast">🚨 تم رصد محاولة خروج! تم تسجيل المخالفة.</div>
 <canvas id="particles-js"></canvas>
-<div id="cheat-toast">⚠️ تنبيه: يرجى التركيز في صفحة الاختبار!</div>
 
 <div class="container">
-    <div id="login-scene" class="scene active">
-        <h2 style="text-align:center; color:var(--g); margin-bottom:5px;">FullTest4All System</h2>
-        <p style="text-align:center; font-size:0.85rem; margin-bottom:20px; color:#aaa;">Programmed by Mr. Ehab Eladawy</p>
-        <input type="text" id="studentName" placeholder="الاسم الرباعي للطالب..." autocomplete="off">
-        <div class="class-btn" onclick="selectClass(this, 'ثالث أول عربي')">ثالث أول عربي</div>
-        <div class="class-btn" onclick="selectClass(this, 'ثالث ثاني لغات')">ثالث ثاني لغات</div>
-        <button class="nav-btn btn-next" style="width:100%; margin-top:10px; padding:18px;" onclick="startExam()">ابدأ الاختبار الآن <i class="fas fa-rocket"></i></button>
+    <div id="login-scene" class="scene active" style="text-align:center;">
+        <img src="https://lh3.googleusercontent.com/d/1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5" class="main-logo" alt="Logo">
+        <h2 style="color:var(--g); margin-bottom:20px;">FullTest4All System</h2>
+        
+        <input type="text" id="studentName" placeholder="اكتب اسمك الرباعي هنا..." autocomplete="off">
+        <div id="class-options">
+            <div class="class-btn" onclick="selectClass(this, 'ثالث أول عربي')">ثالث أول عربي</div>
+            <div class="class-btn" onclick="selectClass(this, 'ثالث ثاني لغات')">ثالث ثاني لغات</div>
+        </div>
+
+        <div class="instructions-list">
+            <h3 style="margin-bottom:15px; color:var(--p);"><i class="fas fa-shield-alt"></i> تعليمات مستر إيهاب:</h3>
+            <ul>
+                <li><i class="fas fa-clock"></i> زمن الاختبار: <b>30 دقيقة</b>.</li>
+                <li><i class="fas fa-user-secret"></i> <b>تنبيه غش:</b> اى خروج من التبويب أو تصوير سيظهر بجوار اسمك.</li>
+                <li><i class="fas fa-forward"></i> زر <b>تأجيل</b> يضع السؤال الصعب في نهاية قائمة الأسئلة.</li>
+                <li><i class="fas fa-lock"></i> لن يتم الإرسال إلا بعد إجابة الـ 30 سؤالاً بالكامل.</li>
+            </ul>
+        </div>
+
+        <button class="nav-btn btn-next" style="width:100%; font-size:1.3rem;" onclick="startExam()">ابدأ الاختبار <i class="fas fa-play"></i></button>
     </div>
 
     <div id="exam-scene" class="scene">
         <div class="header">
-            <div id="info-display" style="font-size:0.8rem; color:var(--p);"></div>
+            <div>
+                <img src="https://lh3.googleusercontent.com/d/1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5" class="header-logo" alt="Logo">
+                <span id="info-display" style="margin-right:10px; font-weight:bold;"></span>
+            </div>
             <div id="totalTimer" class="total-timer">30:00</div>
         </div>
         <div id="exam-content"></div>
         <div class="nav-controls">
             <button class="nav-btn btn-prev" onclick="changeQ(-1)">السابق</button>
-            <button class="nav-btn btn-extra" onclick="deferQuestion()">تأجيل</button>
+            <button class="nav-btn btn-extra" onclick="deferQuestion()">تأجيل السؤال</button>
             <button class="nav-btn btn-next" onclick="changeQ(1)">التالي</button>
         </div>
-        <button id="finalSubmit" class="submit-btn" onclick="confirmFinish()">إرسال النتيجة النهائية <i class="fas fa-paper-plane"></i></button>
+        <button id="finalSubmit" class="submit-btn" onclick="confirmFinish()">إرسال النتيجة لمستر إيهاب <i class="fas fa-paper-plane"></i></button>
     </div>
 
-    <div id="result-scene" class="scene">
-        <div id="result-summary" style="text-align:center;"></div>
-        <div id="review-area" style="margin-top:20px; display:none; background:rgba(0,0,0,0.2); padding:15px; border-radius:15px;"></div>
+    <div id="result-scene" class="scene" style="text-align:center;">
+        <img src="https://lh3.googleusercontent.com/d/1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5" class="main-logo" style="width:120px;" alt="Logo">
+        <div id="result-summary"></div>
+        <div id="review-area" style="margin-top:20px; display:none; background:rgba(0,0,0,0.3); padding:20px; border-radius:20px; border:1px solid var(--p);"></div>
+        <p style="margin-top:20px; color:#aaa;">تم إرسال نتيجتك تلقائياً إلى مستر إيهاب.</p>
     </div>
 </div>
 
 <script>
+// الرابط الخاص بجوجل شيت (نفس رابطك السابق)
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycigTlJjqHJ2OhFH-cJRaC9sVLPgp4r2MJmTp9RHUeOJN2-LiE9J7kRSup6a6q5EkhcA/exec';
 
 let student = { name: '', class: '' };
@@ -127,6 +157,7 @@ let cur = 0; let totalSeconds = 1800;
 let examPages = []; let userAnswers = {};
 let isExamFinished = false; let isExamStarted = false; let cheatCount = 0;
 
+// بيانات الأسئلة
 const grammarData = [
     { id:1, q: "Ancient Rome ________ a powerful empire long ago.", o: ["is", "was", "were", "been"], a: "was" },
     { id:2, q: "Gladiators ________ to fight in colosseums.", o: ["use", "used", "using", "uses"], a: "used" },
@@ -171,7 +202,19 @@ const dragSlide = {
 };
 
 function selectClass(el, name) { document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); student.class = name; }
-function startExam() { student.name = document.getElementById('studentName').value.trim(); if(student.name.length < 10 || !student.class) { alert("أدخل اسمك الرباعي كاملاً واختر فصلك."); return; } examPages = [...grammarData, passageSlide, dragSlide]; isExamStarted = true; showScene('exam-scene'); document.getElementById('info-display').innerText = student.name + " | " + student.class; render(); startTimer(); }
+
+function startExam() { 
+    student.name = document.getElementById('studentName').value.trim(); 
+    if(student.name.split(' ').length < 3 || !student.class) { alert("أدخل اسمك الرباعي كاملاً واختر فصلك."); return; } 
+    examPages = [...grammarData, passageSlide, dragSlide]; 
+    isExamStarted = true; 
+    showScene('exam-scene'); 
+    document.getElementById('cheat-warning-bar').style.display = 'block';
+    document.getElementById('info-display').innerText = student.name + " | " + student.class; 
+    render(); 
+    startTimer(); 
+}
+
 function showScene(id) { document.querySelectorAll('.scene').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
 
 function render() {
@@ -180,29 +223,24 @@ function render() {
     let h = `<p style="color:var(--g); margin-bottom:15px; font-weight:bold; text-align:center;">Page ${cur+1} of ${examPages.length} (Solved: ${solved}/30)</p>`;
     
     if(p.type === 'passage-natural') {
-        h += `<div class="passage-wrapper">
-                <div class="passage-box">${p.text}</div>` + 
-                p.questions.map(q => `<div class="q-item">
-                    <div class="q-text">${q.q}</div>
+        h += `<div class="passage-box">${p.text}</div>` + 
+                p.questions.map(q => `<div class="q-card">
+                    <div class="q-text" style="direction:ltr; text-align:left;">${q.q}</div>
                     <div class="options-grid">` + q.o.map(o => `<div class="opt ${userAnswers[q.id] === o ? 'selected' : ''}" onclick="save(${q.id},'${o}')">${o}</div>`).join('') + `</div>
-                </div>`).join('') + 
-              `</div>`;
+                </div>`).join('');
     } else if(p.type === 'drag-all') {
-        h += `<div class="q-item">
+        h += `<div class="q-card">
                 <div class="word-bank">` + p.words.map(w => `<div class="word" draggable="true" ondragstart="drag(event)" id="${w}">${w}</div>`).join('') + `</div>
-                <div style="line-height:4; font-size:1.25rem; direction:ltr; text-align:left; color:#fff;">${p.content}</div>
+                <div style="line-height:4; font-size:1.3rem; direction:ltr; text-align:left;">${p.content}</div>
               </div>`;
     } else {
-        h += `<div class="q-item">
-                <div class="q-text" style="font-size:1.3rem;">${p.q}</div>
+        h += `<div class="q-card">
+                <div class="q-text" style="direction:ltr; text-align:left; font-size:1.3rem;">${p.q}</div>
                 <div class="options-grid">` + p.o.map(o => `<div class="opt ${userAnswers[p.id] === o ? 'selected' : ''}" onclick="save(${p.id},'${o}')">${o}</div>`).join('') + `</div>
               </div>`;
     }
-    
     box.innerHTML = h;
     document.getElementById('finalSubmit').style.display = (solved >= 30) ? 'block' : 'none';
-    if(p.type === 'drag-all') Object.keys(p.a).forEach(zid => { if(userAnswers[zid]) document.getElementById(zid).innerText = userAnswers[zid]; });
-    window.scrollTo(0,0); // يعيد الصفحة للأعلى عند التنقل بين الصفحات
 }
 
 function countSolved() {
@@ -212,18 +250,29 @@ function countSolved() {
     return count;
 }
 
-function save(id, val) { userAnswers[id] = val; render(); }
-function changeQ(d) { cur += d; if(cur<0) cur=examPages.length-1; if(cur>=examPages.length) cur=0; render(); }
-function deferQuestion() { let p = examPages.splice(cur, 1)[0]; examPages.push(p); render(); }
+function save(id, val) { 
+    userAnswers[id] = val; 
+    const options = event.currentTarget.parentElement.children;
+    for(let opt of options) opt.classList.remove('selected');
+    event.currentTarget.classList.add('selected');
+    document.getElementById('finalSubmit').style.display = (countSolved() >= 30) ? 'block' : 'none';
+}
+
+function changeQ(d) { cur += d; if(cur<0) cur=examPages.length-1; if(cur>=examPages.length) cur=0; render(); window.scrollTo(0,0); }
+function deferQuestion() { let p = examPages.splice(cur, 1)[0]; examPages.push(p); render(); window.scrollTo(0,0); }
 
 function allow(e) { e.preventDefault(); }
 function drag(e) { e.dataTransfer.setData("text", e.target.id); }
-function drop(e) { e.preventDefault(); let word = e.dataTransfer.getData("text"); e.target.innerText = word; userAnswers[e.target.id] = word; render(); }
+function drop(e) { e.preventDefault(); let word = e.dataTransfer.getData("text"); e.target.innerText = word; userAnswers[e.target.id] = word; document.getElementById('finalSubmit').style.display = (countSolved() >= 30) ? 'block' : 'none'; }
 
-function confirmFinish() { if(confirm("هل تأكدت من جميع إجاباتك؟")) finish(); }
+function confirmFinish() { if(confirm("هل أنت متأكد من إنهاء الاختبار؟")) finish(); }
 
 function finish() {
-    isExamFinished = true; let score = 0; let payload = { name: student.name, className: student.class, cheat: cheatCount };
+    isExamFinished = true; 
+    document.getElementById('cheat-warning-bar').style.display = 'none';
+    let score = 0; 
+    let payload = { name: student.name, className: student.class, cheat: cheatCount };
+    
     [...grammarData, ...passageSlide.questions].forEach(q => {
         let ans = userAnswers[q.id] || "No Answer";
         payload["Q" + q.id] = ans;
@@ -234,6 +283,7 @@ function finish() {
         payload["Q" + i] = ans;
         if(ans === dragSlide.a['z'+i]) score += 0.5;
     }
+    
     payload.totalScore = score.toFixed(1) + " / 15";
     fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
     showResultScreen(score);
@@ -243,24 +293,30 @@ function showResultScreen(score) {
     showScene('result-scene');
     document.getElementById('result-summary').innerHTML = `
         <h1 style="color:var(--s); margin-bottom:10px;">تم الإرسال بنجاح</h1>
-        <p style="font-size:1.2rem; color:#ccc;">الدرجة النهائية</p>
-        <p style="font-size:4.5rem; font-weight:900; color:var(--g); margin-bottom:20px;">${score.toFixed(1)} / 15</p>
-        <button class="nav-btn btn-next" style="width:100%; padding:18px;" onclick="toggleReview()">مراجعة الأخطاء</button>`;
+        <p style="font-size:4rem; font-weight:900; color:var(--g);">${score.toFixed(1)} / 15</p>
+        <p style="color:var(--d); font-weight:bold;">محاولات الغش: ${cheatCount}</p>
+        <button class="nav-btn btn-next" style="width:100%; margin-top:20px;" onclick="toggleReview()">مراجعة الإجابات</button>`;
     
-    let rh = "<h3 style='margin:25px 0; color:var(--p);'>تفاصيل الأخطاء:</h3>";
+    let rh = "";
     [...grammarData, ...passageSlide.questions].forEach(q => {
-        if(userAnswers[q.id] !== q.a) rh += `<div class="q-item" style="text-align:left; direction:ltr;"><b>Q:</b> ${q.q}<br>Your: <span style="color:var(--d)">${userAnswers[q.id]||'No Answer'}</span> | Correct: <span style="color:var(--s)">${q.a}</span></div>`;
+        if(userAnswers[q.id] !== q.a) {
+            rh += `<div class="q-card" style="text-align:left; direction:ltr;">
+                    <b>Q:</b> ${q.q}<br>
+                    <span style="color:var(--d)">Your: ${userAnswers[q.id]||'No Answer'}</span> | <span style="color:var(--s)">Correct: ${q.a}</span>
+                   </div>`;
+        }
     });
-    document.getElementById('review-area').innerHTML = rh || "ممتاز! لم تخطئ في أي سؤال.";
+    document.getElementById('review-area').innerHTML = rh || "درجة كاملة! أحسنت.";
 }
 
 function toggleReview() { let a = document.getElementById('review-area'); a.style.display = (a.style.display==='none')?'block':'none'; }
 function startTimer() { setInterval(() => { if(!isExamStarted || isExamFinished) return; totalSeconds--; let m=Math.floor(totalSeconds/60), s=totalSeconds%60; document.getElementById('totalTimer').innerText=`${m}:${s<10?'0'+s:s}`; if(totalSeconds<=0) finish(); }, 1000); }
-window.onblur = () => { if(isExamStarted && !isExamFinished) { cheatCount++; document.getElementById('cheat-toast').style.display='block'; setTimeout(()=>document.getElementById('cheat-toast').style.display='none',3000); } };
+
+window.onblur = () => { if(isExamStarted && !isExamFinished) { cheatCount++; document.getElementById('cheat-toast').style.display='block'; setTimeout(()=>document.getElementById('cheat-toast').style.display='none',4000); } };
 
 const canvas = document.getElementById('particles-js'); const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-let pts = Array.from({length:30},()=>({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.5, vy:(Math.random()-0.5)*0.5}));
+let pts = Array.from({length:35},()=>({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.5, vy:(Math.random()-0.5)*0.5}));
 function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(255,255,255,0.1)"; pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,1,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(anim); }
 anim();
 </script>
