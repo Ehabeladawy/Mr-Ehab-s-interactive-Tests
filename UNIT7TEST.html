@@ -12,39 +12,29 @@
 body { background: var(--bg); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 10px; color: white; overflow-x: hidden; }
 #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 .container { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 30px; width: 100%; max-width: 900px; z-index: 10; box-shadow: 0 25px 60px rgba(0,0,0,0.8); position: relative; margin-top: 40px; }
-
 .main-logo { width: 150px; height: auto; filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8)); margin-bottom: 10px; }
 .header-logo { width: 60px; filter: drop-shadow(0 0 8px var(--g)); vertical-align: middle; }
 .scene { display: none; }
 .scene.active { display: block; animation: fadeIn 0.5s; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
 .rules-box { background: rgba(239, 68, 68, 0.05); border: 2px solid var(--p); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: right; }
 .rules-list { list-style: none; padding: 0; }
 .rules-list li { margin-bottom: 8px; font-weight: bold; color: #eee; }
-
 .class-btn { padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-weight: bold; flex: 1; transition: 0.3s; }
 .class-btn.selected { background: var(--s) !important; border-color: white !important; color: black !important; transform: scale(1.05); }
-
 .q-card { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
 .total-timer { font-size: 1.5rem; font-weight: 900; color: var(--g); background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--g); }
-
 #cheat-warning-bar { position: fixed; top: 0; left: 0; width: 100%; background: var(--d); color: white; text-align: center; padding: 10px; font-weight: bold; z-index: 2000; display: none; }
 #cheat-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 15px 30px; border-radius: 50px; display: none; z-index: 2000; font-weight: bold; }
-
 .opt { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; text-align: left; margin-bottom: 10px; font-weight: bold; }
 .opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); color: var(--s); }
-
 .nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 25px; }
 .nav-btn { padding: 15px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; color: white; }
-
 .drop-box { display: inline-block; min-width: 100px; min-height: 30px; border-bottom: 2px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; margin: 0 5px; }
 .word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; justify-content: center; }
 .word { background: var(--p); padding: 8px 15px; border-radius: 8px; cursor: grab; font-weight: bold; }
-
 input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); color: white; text-align: center; font-size: 1.1rem; outline: none; }
-
 #review-area { text-align: left; direction: ltr; margin-top: 20px; display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; }
 .error-item { margin-bottom: 15px; padding: 10px; border-left: 4px solid var(--d); background: rgba(239, 68, 68, 0.1); }
 </style>
@@ -221,19 +211,17 @@ function finish() {
 
     document.getElementById('review-area').innerHTML = errors || "ممتاز! لا يوجد أخطاء.";
     
-    // إرسال البيانات لجوجل شيت (الرابط المحدث)
+    // --- كود الربط المحدث لضمان وصول النتائج ---
     const scriptURL = "https://script.google.com/macros/s/AKfycbycigTlJjqHJ2OhFH-cJRaC9sVLPgp4r2MJmTp9RHUeOJN2-LiE9J7kRSup6a6q5EkhcA/exec";
-    const formData = new FormData();
-    formData.append('studentName', student.name);
-    formData.append('studentClass', student.class);
-    formData.append('score', score + " / 15");
+    
+    // تحويل البيانات لروابط URL Parameters لضمان الاستلام
+    const finalUrl = `${scriptURL}?studentName=${encodeURIComponent(student.name)}&studentClass=${encodeURIComponent(student.class)}&score=${encodeURIComponent(score + " / 15")}`;
 
-    fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+    fetch(finalUrl, { method: 'GET', mode: 'no-cors' })
     .then(() => {
         showScene('result-scene');
         document.getElementById('result-summary').innerText = score + " / 15";
     }).catch(err => {
-        console.error('Error!', err.message);
         showScene('result-scene');
         document.getElementById('result-summary').innerText = score + " / 15";
     });
