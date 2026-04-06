@@ -13,22 +13,17 @@ body { background: var(--bg); min-height: 100vh; display: flex; align-items: fle
 #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 .container { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 30px; width: 100%; max-width: 900px; z-index: 10; box-shadow: 0 25px 60px rgba(0,0,0,0.8); position: relative; margin-top: 40px; }
 
-/* الأيقونات والتصميم السابق */
 .main-logo { width: 150px; height: auto; filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8)); margin-bottom: 10px; }
 .header-logo { width: 60px; filter: drop-shadow(0 0 8px var(--g)); vertical-align: middle; }
 .scene { display: none; }
 .scene.active { display: block; animation: fadeIn 0.5s; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.rules-box { background: rgba(239, 68, 68, 0.1); border: 2px solid var(--d); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: right; }
+.rules-box { background: rgba(239, 68, 68, 0.05); border: 2px solid var(--p); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: right; }
 .rules-list { list-style: none; padding: 0; }
 .rules-list li { margin-bottom: 8px; font-weight: bold; color: #eee; }
 
-.class-btn { 
-    padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); 
-    background: rgba(255,255,255,0.05); color: white; cursor: pointer; 
-    font-weight: bold; flex: 1; transition: 0.3s;
-}
+.class-btn { padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-weight: bold; flex: 1; transition: 0.3s; }
 .class-btn.selected { background: var(--s) !important; border-color: white !important; color: black !important; transform: scale(1.05); }
 
 .q-card { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
@@ -49,12 +44,15 @@ body { background: var(--bg); min-height: 100vh; display: flex; align-items: fle
 .word { background: var(--p); padding: 8px 15px; border-radius: 8px; cursor: grab; font-weight: bold; }
 
 input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); color: white; text-align: center; font-size: 1.1rem; outline: none; }
+
+#review-area { text-align: left; direction: ltr; margin-top: 20px; display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; }
+.error-item { margin-bottom: 15px; padding: 10px; border-left: 4px solid var(--d); background: rgba(239, 68, 68, 0.1); }
 </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div id="cheat-warning-bar">🚨 نظام المراقبة نشط: ممنوع الخروج من الصفحة نهائياً!</div>
-<div id="cheat-toast">🚨 محاولة خروج! سيتم تسجيل مخالفة ضدك.</div>
+<div id="cheat-warning-bar">🚨 نظام المراقبة نشط: ممنوع الخروج من الصفحة!</div>
+<div id="cheat-toast">🚨 محاولة خروج! سيتم إبلاغ المستر.</div>
 <canvas id="particles-js"></canvas>
 
 <div class="container">
@@ -63,21 +61,19 @@ input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 2p
         <h2 style="color:var(--g);">FullTest4All - Mr. Ehab Eladawy</h2>
         
         <div class="rules-box">
-            <h3 style="color:var(--d);"><i class="fas fa-shield-alt"></i> شروط وتهديدات هامة:</h3>
+            <h3 style="color:var(--p);"><i class="fas fa-info-circle"></i> ملاحظات هامة للطلاب:</h3>
             <ul class="rules-list">
-                <li>⚠️ أي محاولة لتصوير الشاشة أو الخروج منها تلغي الاختبار فوراً.</li>
-                <li>⚠️ الأسئلة تظهر بترتيب مختلف لكل زميل.. الغش مستحيل.</li>
-                <li>⚠️ سيتم إرسال درجتك فوراً إلى قاعدة بيانات مستر إيهاب.</li>
+                <li>⚠️ يرجى عدم محاولة الخروج من الصفحة للحفاظ على استمرارية الاختبار.</li>
+                <li>⚠️ الأسئلة تظهر بترتيب عشوائي لكل طالب لضمان النزاهة.</li>
+                <li>⚠️ يتم إرسال نتيجتك مباشرة إلى سجلات مستر إيهاب فور الانتهاء.</li>
             </ul>
         </div>
 
         <input type="text" id="studentName" placeholder="أدخل اسمك الرباعي هنا..." style="margin-bottom:15px;">
-        
         <div id="class-options" style="display:flex; gap:10px; margin-bottom:20px;">
             <button class="class-btn" onclick="selectClass('3rd Prep A', this)">3rd Prep A</button>
             <button class="class-btn" onclick="selectClass('3rd Prep B', this)">3rd Prep B</button>
         </div>
-        
         <button class="nav-btn" style="background:var(--p); width:100%; font-size:1.2rem; font-weight:900;" onclick="startExam()">ابدأ الاختبار الآن</button>
     </div>
 
@@ -98,7 +94,9 @@ input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 2p
     <div id="result-scene" class="scene" style="text-align:center;">
         <h2 style="color:var(--s)">تم إرسال الاختبار بنجاح</h2>
         <div id="result-summary" style="font-size:3rem; color:var(--g); margin:20px 0;"></div>
-        <p>مستر إيهاب العدوي يتمنى لكم النجاح الباهر.</p>
+        <button class="nav-btn" style="background:var(--p); width:200px;" onclick="toggleReview()">مراجعة أخطائي</button>
+        <div id="review-area"></div>
+        <p style="margin-top:20px;">مستر إيهاب العدوي يتمنى لكم النجاح الباهر.</p>
     </div>
 </div>
 
@@ -108,7 +106,6 @@ let cur = 0; let totalSeconds = 1800;
 let examPages = []; let userAnswers = {};
 let isExamFinished = false; let isExamStarted = false;
 
-// الأسئلة
 const rawMCQ = [
     { id: 1, q: "To have a strong body, you should take care of your ________ health.", o: ["mental", "physical", "global", "historical"], a: "physical" },
     { id: 2, q: "Ancient Romans enjoyed watching ________ races in the stadium.", o: ["chariot", "car", "plane", "ship"], a: "chariot" },
@@ -163,12 +160,10 @@ function selectClass(c, btn) {
 function startExam() {
     student.name = document.getElementById('studentName').value.trim();
     if(student.name.split(' ').length < 3 || !student.class) { alert("أدخل اسمك رباعي واختر الفصل."); return; }
-    
     rawMCQ.forEach(item => shuffle(item.o));
     rawPassage.questions.forEach(item => shuffle(item.o));
     let currentDrag = {...rawDrag, words: shuffle([...rawDrag.words])};
     examPages = [...shuffle([...rawMCQ]), rawPassage, currentDrag];
-    
     isExamStarted = true; showScene('exam-scene');
     document.getElementById('cheat-warning-bar').style.display = 'block';
     document.getElementById('info-display').innerText = student.name + " (" + student.class + ")";
@@ -180,7 +175,6 @@ function showScene(id) { document.querySelectorAll('.scene').forEach(s => s.clas
 function render() {
     const p = examPages[cur]; const box = document.getElementById('exam-content');
     let h = `<p style="text-align:center; color:var(--g); margin-bottom:15px; font-weight:bold;">سؤال ${cur+1} من ${examPages.length}</p>`;
-    
     if(p.type === 'passage') {
         h += `<div class='q-card' style='direction:ltr; text-align:left; font-size:1.1rem; line-height:1.8; margin-bottom:15px;'>${p.text}</div>` + p.questions.map(q => `<div class='q-card'><div style='direction:ltr; text-align:left; margin-bottom:15px;'>${q.q}</div>` + q.o.map(o => `<div class='opt ${userAnswers[q.id]===o?'selected':''}' onclick="saveMCQ(${q.id},'${o}')">${o}</div>`).join('') + `</div>`).join('');
     } else if(p.type === 'drag') {
@@ -200,29 +194,54 @@ function allow(e) { e.preventDefault(); }
 function drag(e) { e.dataTransfer.setData("text", e.target.id); }
 function drop(e) { e.preventDefault(); let word = e.dataTransfer.getData("text"); e.target.innerText = word; userAnswers[e.target.id] = word; checkSubmit(); }
 
-function checkSubmit() { document.getElementById('finalSubmit').style.display = (Object.keys(userAnswers).length >= 30) ? 'block' : 'none'; }
-function confirmFinish() { if(confirm("تأكيد الإرسال؟")) finish(); }
+function checkSubmit() { 
+    let answered = Object.keys(userAnswers).length;
+    document.getElementById('finalSubmit').style.display = (answered >= 30) ? 'block' : 'none'; 
+}
 
-// دالة الربط مع جوجل شيت
+function confirmFinish() { if(confirm("هل أنت متأكد من إنهاء الاختبار وإرسال الإجابات؟")) finish(); }
+
 function finish() {
     isExamFinished = true;
     let score = 0;
-    rawMCQ.forEach(q => { if(userAnswers[q.id] === q.a) score += 0.5; });
-    rawPassage.questions.forEach(q => { if(userAnswers[q.id] === q.a) score += 0.5; });
-    for(let k in rawDrag.answers) { if(userAnswers[k] === rawDrag.answers[k]) score += 0.5; }
-    
-    // إرسال البيانات للرابط المذكور
-    const url = "https://script.google.com/macros/s/AKfycbycigTlJjqHJ2OhFH-cJRaC9sVLPgp4r2MJmTp9RHUeOJN2-LiE9J7kRSup6a6q5EkhcA/exec";
-    const data = new URLSearchParams();
-    data.append('studentName', student.name);
-    data.append('studentClass', student.class);
-    data.append('score', score + " / 15");
+    let errors = "";
 
-    fetch(url, { method: 'POST', mode: 'no-cors', body: data })
+    rawMCQ.forEach(q => { 
+        if(userAnswers[q.id] === q.a) score += 0.5; 
+        else errors += `<div class="error-item"><b>Q:</b> ${q.q}<br><span style="color:var(--d)">Your Ans: ${userAnswers[q.id] || "None"}</span><br><span style="color:var(--s)">Correct: ${q.a}</span></div>`;
+    });
+    rawPassage.questions.forEach(q => { 
+        if(userAnswers[q.id] === q.a) score += 0.5; 
+        else errors += `<div class="error-item"><b>Q:</b> ${q.q}<br><span style="color:var(--d)">Your Ans: ${userAnswers[q.id] || "None"}</span><br><span style="color:var(--s)">Correct: ${q.a}</span></div>`;
+    });
+    for(let k in rawDrag.answers) { 
+        if(userAnswers[k] === rawDrag.answers[k]) score += 0.5;
+        else errors += `<div class="error-item"><b>Gap ${k}:</b><br><span style="color:var(--d)">Your Ans: ${userAnswers[k] || "None"}</span><br><span style="color:var(--s)">Correct: ${rawDrag.answers[k]}</span></div>`;
+    }
+
+    document.getElementById('review-area').innerHTML = errors || "ممتاز! لا يوجد أخطاء.";
+    
+    // إرسال البيانات لجوجل شيت (الرابط المحدث)
+    const scriptURL = "https://script.google.com/macros/s/AKfycbycigTlJjqHJ2OhFH-cJRaC9sVLPgp4r2MJmTp9RHUeOJN2-LiE9J7kRSup6a6q5EkhcA/exec";
+    const formData = new FormData();
+    formData.append('studentName', student.name);
+    formData.append('studentClass', student.class);
+    formData.append('score', score + " / 15");
+
+    fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
     .then(() => {
         showScene('result-scene');
         document.getElementById('result-summary').innerText = score + " / 15";
+    }).catch(err => {
+        console.error('Error!', err.message);
+        showScene('result-scene');
+        document.getElementById('result-summary').innerText = score + " / 15";
     });
+}
+
+function toggleReview() { 
+    let area = document.getElementById('review-area');
+    area.style.display = (area.style.display === 'none' || area.style.display === '') ? 'block' : 'none';
 }
 
 function startTimer() { setInterval(() => { if(!isExamStarted || isExamFinished) return; totalSeconds--; let m=Math.floor(totalSeconds/60), s=totalSeconds%60; document.getElementById('totalTimer').innerText=`${m}:${s<10?'0'+s:s}`; if(totalSeconds<=0) finish(); }, 1000); }
