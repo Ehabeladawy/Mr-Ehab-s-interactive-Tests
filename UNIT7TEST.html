@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FullTest4All - Mr. Ehab Eladawy</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root { --p: #6366f1; --s: #10b981; --d: #ef4444; --bg: #020617; --g: #ffb142; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+body { background: var(--bg); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 10px; color: white; overflow-x: hidden; }
+#particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+.container { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 30px; width: 100%; max-width: 900px; z-index: 10; box-shadow: 0 25px 60px rgba(0,0,0,0.8); position: relative; margin-top: 40px; }
+
+/* الأيقونات والتصميم السابق */
+.main-logo { width: 150px; height: auto; filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8)); margin-bottom: 10px; }
+.header-logo { width: 60px; filter: drop-shadow(0 0 8px var(--g)); vertical-align: middle; }
+.scene { display: none; }
+.scene.active { display: block; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.rules-box { background: rgba(239, 68, 68, 0.1); border: 2px solid var(--d); border-radius: 15px; padding: 20px; margin: 20px 0; text-align: right; }
+.rules-list { list-style: none; padding: 0; }
+.rules-list li { margin-bottom: 8px; font-weight: bold; color: #eee; }
+
+.class-btn { 
+    padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); 
+    background: rgba(255,255,255,0.05); color: white; cursor: pointer; 
+    font-weight: bold; flex: 1; transition: 0.3s;
+}
+.class-btn.selected { background: var(--s) !important; border-color: white !important; color: black !important; transform: scale(1.05); }
+
+.q-card { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+.total-timer { font-size: 1.5rem; font-weight: 900; color: var(--g); background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--g); }
+
+#cheat-warning-bar { position: fixed; top: 0; left: 0; width: 100%; background: var(--d); color: white; text-align: center; padding: 10px; font-weight: bold; z-index: 2000; display: none; }
+#cheat-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 15px 30px; border-radius: 50px; display: none; z-index: 2000; font-weight: bold; }
+
+.opt { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; text-align: left; margin-bottom: 10px; font-weight: bold; }
+.opt.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); color: var(--s); }
+
+.nav-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 25px; }
+.nav-btn { padding: 15px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; color: white; }
+
+.drop-box { display: inline-block; min-width: 100px; min-height: 30px; border-bottom: 2px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; margin: 0 5px; }
+.word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; justify-content: center; }
+.word { background: var(--p); padding: 8px 15px; border-radius: 8px; cursor: grab; font-weight: bold; }
+
+input[type="text"] { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); color: white; text-align: center; font-size: 1.1rem; outline: none; }
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<div id="cheat-warning-bar">🚨 نظام المراقبة نشط: ممنوع الخروج من الصفحة نهائياً!</div>
+<div id="cheat-toast">🚨 محاولة خروج! سيتم تسجيل مخالفة ضدك.</div>
+<canvas id="particles-js"></canvas>
+
+<div class="container">
+    <div id="login-scene" class="scene active" style="text-align:center;">
+        <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w500" class="main-logo">
+        <h2 style="color:var(--g);">FullTest4All - Mr. Ehab Eladawy</h2>
+        
+        <div class="rules-box">
+            <h3 style="color:var(--d);"><i class="fas fa-shield-alt"></i> شروط وتهديدات هامة:</h3>
+            <ul class="rules-list">
+                <li>⚠️ أي محاولة لتصوير الشاشة أو الخروج منها تلغي الاختبار فوراً.</li>
+                <li>⚠️ الأسئلة تظهر بترتيب مختلف لكل زميل.. الغش مستحيل.</li>
+                <li>⚠️ سيتم إرسال درجتك فوراً إلى قاعدة بيانات مستر إيهاب.</li>
+            </ul>
+        </div>
+
+        <input type="text" id="studentName" placeholder="أدخل اسمك الرباعي هنا..." style="margin-bottom:15px;">
+        
+        <div id="class-options" style="display:flex; gap:10px; margin-bottom:20px;">
+            <button class="class-btn" onclick="selectClass('3rd Prep A', this)">3rd Prep A</button>
+            <button class="class-btn" onclick="selectClass('3rd Prep B', this)">3rd Prep B</button>
+        </div>
+        
+        <button class="nav-btn" style="background:var(--p); width:100%; font-size:1.2rem; font-weight:900;" onclick="startExam()">ابدأ الاختبار الآن</button>
+    </div>
+
+    <div id="exam-scene" class="scene">
+        <div class="header">
+            <div><img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w500" class="header-logo"><span id="info-display" style="margin-right:10px; font-weight:bold;"></span></div>
+            <div id="totalTimer" class="total-timer">30:00</div>
+        </div>
+        <div id="exam-content"></div>
+        <div class="nav-controls">
+            <button class="nav-btn" style="background:#334155" onclick="changeQ(-1)"><i class="fas fa-arrow-right"></i> السابق</button>
+            <button class="nav-btn" style="background:var(--g); color:black" onclick="deferQuestion()"><i class="fas fa-clock"></i> تأجيل</button>
+            <button class="nav-btn" style="background:var(--p)" onclick="changeQ(1)">التالي <i class="fas fa-arrow-left"></i></button>
+        </div>
+        <button id="finalSubmit" class="nav-btn" style="background:var(--s); width:100%; margin-top:20px; display:none; font-size:1.2rem;" onclick="confirmFinish()">إرسال الإجابات للمستر إيهاب</button>
+    </div>
+
+    <div id="result-scene" class="scene" style="text-align:center;">
+        <h2 style="color:var(--s)">تم إرسال الاختبار بنجاح</h2>
+        <div id="result-summary" style="font-size:3rem; color:var(--g); margin:20px 0;"></div>
+        <p>مستر إيهاب العدوي يتمنى لكم النجاح الباهر.</p>
+    </div>
+</div>
+
+<script>
+let student = { name: '', class: '' };
+let cur = 0; let totalSeconds = 1800;
+let examPages = []; let userAnswers = {};
+let isExamFinished = false; let isExamStarted = false;
+
+// الأسئلة
+const rawMCQ = [
+    { id: 1, q: "To have a strong body, you should take care of your ________ health.", o: ["mental", "physical", "global", "historical"], a: "physical" },
+    { id: 2, q: "Ancient Romans enjoyed watching ________ races in the stadium.", o: ["chariot", "car", "plane", "ship"], a: "chariot" },
+    { id: 3, q: "Our teacher deserves ________ because he helps us all the time.", o: ["energy", "injury", "admiration", "battle"], a: "admiration" },
+    { id: 4, q: "Winning the final match makes you a ________.", o: ["rival", "champion", "knight", "gladiator"], a: "champion" },
+    { id: 5, q: "I watched a movie about a brave ________ in the Middle Ages.", o: ["knight", "trainer", "human", "archery"], a: "knight" },
+    { id: 6, q: "You should ________ on your studies to get high marks.", o: ["respect", "honor", "focus", "enjoy"], a: "focus" },
+    { id: 7, q: "My father ________ to smoke, but he stopped last year.", o: ["used", "uses", "using", "use"], a: "used" },
+    { id: 8, q: "Did she ________ have long hair when she was a child?", o: ["use to", "used to", "using to", "uses to"], a: "use to" },
+    { id: 9, q: "I ________ have a bike, but now I have a car.", o: ["no longer", "used to", "didn't use", "am used to"], a: "used to" },
+    { id: 10, q: "Modern athletes play with ________ and follow the rules.", o: ["injury", "fair play", "battle", "strength"], a: "fair play" },
+    { id: 11, q: "To get the noun from 'strong', we use ________.", o: ["strength", "strongly", "stronger", "strongest"], a: "strength" },
+    { id: 12, q: "The opposite of 'honor' can be 'shame' or ________.", o: ["respect", "disrespect", "admiration", "focus"], a: "disrespect" },
+    { id: 13, q: "He suffered a serious ________ during the football match.", o: ["injury", "energy", "honor", "champion"], a: "injury" },
+    { id: 14, q: "They didn't ________ to play in the street, they were quiet.", o: ["use", "used", "using", "uses"], a: "use" },
+    { id: 15, q: "Discus ________ is one of the oldest Olympic sports.", o: ["racing", "throwing", "running", "jumping"], a: "throwing" },
+    { id: 16, q: "The knight fought in many ________ to protect his king.", o: ["archery", "battles", "gladiators", "injuries"], a: "battles" },
+    { id: 17, q: "I no longer eat sweets. This means I ________ to eat them.", o: ["use", "didn't use", "used", "using"], a: "used" },
+    { id: 18, q: "We should ________ the old and listen to their advice.", o: ["respect", "ignore", "reduce", "remove"], a: "respect" },
+    { id: 19, q: "Archery is the sport of shooting ________.", o: ["bullets", "arrows", "balls", "stones"], a: "arrows" },
+    { id: 20, q: "Are you ________ be late for school every day?", o: ["use to", "used to", "using to", "uses to"], a: "used to" }
+];
+
+const rawPassage = {
+    type: 'passage',
+    text: "Sports have changed significantly throughout history. In ancient Rome, gladiators used to fight in dangerous battles for entertainment. In the Middle Ages, knights practiced archery to prepare for wars. Today, modern sports focus more on physical health and fair play.",
+    questions: [
+        { id: 21, q: "What was popular in ancient Rome?", o: ["Gladiators", "Tennis", "Internet", "Flying"], a: "Gladiators" },
+        { id: 22, q: "Gladiators fought for ________.", o: ["Money", "Entertainment", "Food", "Sleep"], a: "Entertainment" },
+        { id: 23, q: "Knights practiced ________.", o: ["Archery", "Football", "Boxing", "Golf"], a: "Archery" },
+        { id: 24, q: "Modern sports focus on ________ health.", o: ["Physical", "Bad", "No", "Historical"], a: "Physical" },
+        { id: 25, q: "People admire ________.", o: ["Sportsmanship", "Losing", "Fighting", "Injuries"], a: "Sportsmanship" },
+        { id: 26, q: "Rivals means ________.", o: ["Competitors", "Friends", "Teachers", "Sisters"], a: "Competitors" }
+    ]
+};
+
+const rawDrag = {
+    type: 'drag',
+    words: ["Honor", "Respect", "Archery", "Gladiator"],
+    answers: { d27: "Gladiator", d28: "Archery", d29: "Respect", d30: "Honor" },
+    content: `In the past, a <span class='drop-box' id='d27' ondrop='drop(event)' ondragover='allow(event)'></span> fought in Rome. Another sport was <span class='drop-box' id='d28' ondrop='drop(event)' ondragover='allow(event)'></span> using arrows. Today, players must <span class='drop-box' id='d29' ondrop='drop(event)' ondragover='allow(event)'></span> each other. Winning a medal is a great <span class='drop-box' id='d30' ondrop='drop(event)' ondragover='allow(event)'></span>.`
+};
+
+function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+
+function selectClass(c, btn) {
+    document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    student.class = c;
+}
+
+function startExam() {
+    student.name = document.getElementById('studentName').value.trim();
+    if(student.name.split(' ').length < 3 || !student.class) { alert("أدخل اسمك رباعي واختر الفصل."); return; }
+    
+    rawMCQ.forEach(item => shuffle(item.o));
+    rawPassage.questions.forEach(item => shuffle(item.o));
+    let currentDrag = {...rawDrag, words: shuffle([...rawDrag.words])};
+    examPages = [...shuffle([...rawMCQ]), rawPassage, currentDrag];
+    
+    isExamStarted = true; showScene('exam-scene');
+    document.getElementById('cheat-warning-bar').style.display = 'block';
+    document.getElementById('info-display').innerText = student.name + " (" + student.class + ")";
+    render(); startTimer();
+}
+
+function showScene(id) { document.querySelectorAll('.scene').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+
+function render() {
+    const p = examPages[cur]; const box = document.getElementById('exam-content');
+    let h = `<p style="text-align:center; color:var(--g); margin-bottom:15px; font-weight:bold;">سؤال ${cur+1} من ${examPages.length}</p>`;
+    
+    if(p.type === 'passage') {
+        h += `<div class='q-card' style='direction:ltr; text-align:left; font-size:1.1rem; line-height:1.8; margin-bottom:15px;'>${p.text}</div>` + p.questions.map(q => `<div class='q-card'><div style='direction:ltr; text-align:left; margin-bottom:15px;'>${q.q}</div>` + q.o.map(o => `<div class='opt ${userAnswers[q.id]===o?'selected':''}' onclick="saveMCQ(${q.id},'${o}')">${o}</div>`).join('') + `</div>`).join('');
+    } else if(p.type === 'drag') {
+        h += `<div class='q-card'><div class='word-bank'>` + p.words.map(w => `<div class='word' draggable='true' ondragstart='drag(event)' id='${w}'>${w}</div>`).join('') + `</div><div style='line-height:3; direction:ltr; text-align:left; font-size:1.2rem;'>${p.content}</div></div>`;
+    } else {
+        h += `<div class='q-card'><div style='direction:ltr; text-align:left; font-size:1.2rem; margin-bottom:15px;'>${p.q}</div>` + p.o.map(o => `<div class='opt ${userAnswers[p.id]===o?'selected':''}' onclick="saveMCQ(${p.id},'${o}')">${o}</div>`).join('') + `</div>`;
+    }
+    box.innerHTML = h;
+    if(p.type === 'drag') { Object.keys(p.answers).forEach(key => { if(userAnswers[key]) document.getElementById(key).innerText = userAnswers[key]; }); }
+    checkSubmit();
+}
+
+function saveMCQ(id, val) { userAnswers[id] = val; render(); }
+function changeQ(d) { cur += d; if(cur<0) cur=examPages.length-1; if(cur>=examPages.length) cur=0; render(); }
+function deferQuestion() { let p = examPages.splice(cur, 1)[0]; examPages.push(p); render(); }
+function allow(e) { e.preventDefault(); }
+function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+function drop(e) { e.preventDefault(); let word = e.dataTransfer.getData("text"); e.target.innerText = word; userAnswers[e.target.id] = word; checkSubmit(); }
+
+function checkSubmit() { document.getElementById('finalSubmit').style.display = (Object.keys(userAnswers).length >= 30) ? 'block' : 'none'; }
+function confirmFinish() { if(confirm("تأكيد الإرسال؟")) finish(); }
+
+// دالة الربط مع جوجل شيت
+function finish() {
+    isExamFinished = true;
+    let score = 0;
+    rawMCQ.forEach(q => { if(userAnswers[q.id] === q.a) score += 0.5; });
+    rawPassage.questions.forEach(q => { if(userAnswers[q.id] === q.a) score += 0.5; });
+    for(let k in rawDrag.answers) { if(userAnswers[k] === rawDrag.answers[k]) score += 0.5; }
+    
+    // إرسال البيانات للرابط المذكور
+    const url = "https://script.google.com/macros/s/AKfycbycigTlJjqHJ2OhFH-cJRaC9sVLPgp4r2MJmTp9RHUeOJN2-LiE9J7kRSup6a6q5EkhcA/exec";
+    const data = new URLSearchParams();
+    data.append('studentName', student.name);
+    data.append('studentClass', student.class);
+    data.append('score', score + " / 15");
+
+    fetch(url, { method: 'POST', mode: 'no-cors', body: data })
+    .then(() => {
+        showScene('result-scene');
+        document.getElementById('result-summary').innerText = score + " / 15";
+    });
+}
+
+function startTimer() { setInterval(() => { if(!isExamStarted || isExamFinished) return; totalSeconds--; let m=Math.floor(totalSeconds/60), s=totalSeconds%60; document.getElementById('totalTimer').innerText=`${m}:${s<10?'0'+s:s}`; if(totalSeconds<=0) finish(); }, 1000); }
+window.onblur = () => { if(isExamStarted && !isExamFinished) { document.getElementById('cheat-toast').style.display='block'; setTimeout(()=>document.getElementById('cheat-toast').style.display='none',3000); } };
+</script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>particlesJS("particles-js", {"particles":{"number":{"value":30},"color":{"value":"#ffffff"},"opacity":{"value":0.1},"size":{"value":3},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.1,"width":1},"move":{"enable":true,"speed":1}}});</script>
+</body>
+</html>
