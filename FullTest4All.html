@@ -27,7 +27,6 @@ body { background: var(--bg); min-height: 100vh; display: flex; align-items: fle
     margin-top: 40px;
 }
 
-/* تصميم اللوجو مع التوهج */
 .main-logo {
     width: 150px;
     height: auto;
@@ -47,7 +46,6 @@ body { background: var(--bg); min-height: 100vh; display: flex; align-items: fle
 .scene.active { display: block; }
 @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
 
-/* إطارات متحركة للأسئلة */
 .q-card { 
     position: relative; 
     background: rgba(0,0,0,0.4); 
@@ -62,7 +60,6 @@ body { background: var(--bg); min-height: 100vh; display: flex; align-items: fle
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .total-timer { font-size: 1.5rem; font-weight: 900; color: var(--g); background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--g); }
 
-/* نظام التنبيهات */
 #cheat-warning-bar { position: fixed; top: 0; left: 0; width: 100%; background: var(--d); color: white; text-align: center; padding: 10px; font-weight: bold; z-index: 2000; display: none; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
 #cheat-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--d); color: white; padding: 15px 30px; border-radius: 50px; display: none; z-index: 2000; font-weight: bold; animation: shake 0.5s; }
 @keyframes shake { 0%, 100% { transform: translateX(-50%); } 25% { transform: translateX(-55%); } 75% { transform: translateX(-45%); } }
@@ -87,10 +84,34 @@ input[type="text"] { width: 100%; padding: 20px; border-radius: 15px; border: 2p
 .class-btn { padding: 18px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); cursor: pointer; text-align: center; font-weight: bold; margin-bottom: 12px; }
 .class-btn.selected { border-color: var(--s); background: rgba(16, 185, 129, 0.2); transform: scale(1.02); }
 
-/* السحب والافلات */
-.drop-box { display: inline-block; min-width: 100px; height: 35px; border-bottom: 3px solid var(--g); vertical-align: middle; text-align: center; color: var(--s); font-weight: bold; background: rgba(255,255,255,0.05); margin: 0 5px; }
+.drop-box { 
+    display: inline-block; 
+    min-width: 120px; 
+    height: auto; 
+    border-bottom: 3px solid var(--g); 
+    vertical-align: middle; 
+    text-align: center; 
+    color: var(--s); 
+    font-weight: bold; 
+    background: rgba(255,255,255,0.05); 
+    margin: 0 5px; 
+    padding: 5px 10px;
+    cursor: text;
+}
+.drop-box input { 
+    background: transparent; 
+    border: none; 
+    color: var(--s); 
+    font-weight: bold; 
+    text-align: center; 
+    outline: none; 
+    width: 100%; 
+    font-size: 1rem;
+    font-family: 'Cairo', sans-serif;
+}
 .word-bank { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; justify-content: center; }
-.word { background: var(--p); padding: 10px 20px; border-radius: 10px; cursor: grab; font-weight: bold; }
+.word { background: var(--p); padding: 10px 20px; border-radius: 10px; cursor: grab; font-weight: bold; user-select: none; }
+.word:active { cursor: grabbing; }
 </style>
 </head>
 <body oncontextmenu="return false;">
@@ -101,13 +122,13 @@ input[type="text"] { width: 100%; padding: 20px; border-radius: 15px; border: 2p
 
 <div class="container">
     <div id="login-scene" class="scene active" style="text-align:center;">
-        <img src="https://lh3.googleusercontent.com/d/1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5" class="main-logo" alt="Logo">
+        <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w500" class="main-logo" alt="Logo">
         <h2 style="color:var(--g); margin-bottom:20px;">FullTest4All System</h2>
         
         <input type="text" id="studentName" placeholder="اكتب اسمك الرباعي هنا..." autocomplete="off">
-        <div id="class-options">
-            <div class="class-btn" onclick="selectClass(this, 'ثالث أول عربي')">ثالث أول عربي</div>
-            <div class="class-btn" onclick="selectClass(this, 'ثالث ثاني لغات')">ثالث ثاني لغات</div>
+        <div id="class-options" style="display: flex; gap: 10px; justify-content: center;">
+            <div class="class-btn" style="flex:1" onclick="selectClass(this, 'ثالث أول عربي')">ثالث أول عربي</div>
+            <div class="class-btn" style="flex:1" onclick="selectClass(this, 'ثالث ثاني لغات')">ثالث ثاني لغات</div>
         </div>
 
         <div class="instructions-list">
@@ -117,6 +138,7 @@ input[type="text"] { width: 100%; padding: 20px; border-radius: 15px; border: 2p
                 <li><i class="fas fa-user-secret"></i> <b>تنبيه غش:</b> اى خروج من التبويب أو تصوير سيظهر بجوار اسمك.</li>
                 <li><i class="fas fa-forward"></i> زر <b>تأجيل</b> يضع السؤال الصعب في نهاية قائمة الأسئلة.</li>
                 <li><i class="fas fa-lock"></i> لن يتم الإرسال إلا بعد إجابة الـ 30 سؤالاً بالكامل.</li>
+                <li><i class="fas fa-edit"></i> <b>جديد:</b> يمكنك الكتابة مباشرة في مربعات الإجابة أو سحب الكلمات.</li>
             </ul>
         </div>
 
@@ -126,7 +148,7 @@ input[type="text"] { width: 100%; padding: 20px; border-radius: 15px; border: 2p
     <div id="exam-scene" class="scene">
         <div class="header">
             <div>
-                <img src="https://lh3.googleusercontent.com/d/1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5" class="header-logo" alt="Logo">
+                <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w500" class="header-logo" alt="Logo">
                 <span id="info-display" style="margin-right:10px; font-weight:bold;"></span>
             </div>
             <div id="totalTimer" class="total-timer">30:00</div>
@@ -141,7 +163,7 @@ input[type="text"] { width: 100%; padding: 20px; border-radius: 15px; border: 2p
     </div>
 
     <div id="result-scene" class="scene" style="text-align:center;">
-        <img src="https://lh3.googleusercontent.com/d/1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5" class="main-logo" style="width:120px;" alt="Logo">
+        <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w500" class="main-logo" style="width:120px;" alt="Logo">
         <div id="result-summary"></div>
         <div id="review-area" style="margin-top:20px; display:none; background:rgba(0,0,0,0.3); padding:20px; border-radius:20px; border:1px solid var(--p);"></div>
         <p style="margin-top:20px; color:#aaa;">تم إرسال نتيجتك تلقائياً إلى مستر إيهاب.</p>
@@ -149,7 +171,6 @@ input[type="text"] { width: 100%; padding: 20px; border-radius: 15px; border: 2p
 </div>
 
 <script>
-// الرابط الخاص بجوجل شيت (نفس رابطك السابق)
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycigTlJjqHJ2OhFH-cJRaC9sVLPgp4r2MJmTp9RHUeOJN2-LiE9J7kRSup6a6q5EkhcA/exec';
 
 let student = { name: '', class: '' };
@@ -157,7 +178,6 @@ let cur = 0; let totalSeconds = 1800;
 let examPages = []; let userAnswers = {};
 let isExamFinished = false; let isExamStarted = false; let cheatCount = 0;
 
-// بيانات الأسئلة
 const grammarData = [
     { id:1, q: "Ancient Rome ________ a powerful empire long ago.", o: ["is", "was", "were", "been"], a: "was" },
     { id:2, q: "Gladiators ________ to fight in colosseums.", o: ["use", "used", "using", "uses"], a: "used" },
@@ -198,7 +218,7 @@ const dragSlide = {
     type: 'drag-all',
     words: ["Horse", "Honor", "Sword", "Focus"],
     a: { z27: "Horse", z28: "Honor", z29: "Sword", z30: "Focus" },
-    content: `A brave knight rode a <span class='drop-box' id='z27' ondrop='drop(event)' ondragover='allow(event)'></span>. He always showed <span class='drop-box' id='z28' ondrop='drop(event)' ondragover='allow(event)'></span> to all people. In battles, he fought with a sharp <span class='drop-box' id='z29' ondrop='drop(event)' ondragover='allow(event)'></span>. He had to <span class='drop-box' id='z30' ondrop='drop(event)' ondragover='allow(event)'></span> on his enemy to win.`
+    content: `A brave knight rode a <span class='drop-box' id='z27' ondrop='drop(event)' ondragover='allow(event)' onclick=\"makeEditable('z27')\"></span>. He always showed <span class='drop-box' id='z28' ondrop='drop(event)' ondragover='allow(event)' onclick=\"makeEditable('z28')\"></span> to all people. In battles, he fought with a sharp <span class='drop-box' id='z29' ondrop='drop(event)' ondragover='allow(event)' onclick=\"makeEditable('z29')\"></span>. He had to <span class='drop-box' id='z30' ondrop='drop(event)' ondragover='allow(event)' onclick=\"makeEditable('z30')\"></span> on his enemy to win.`
 };
 
 function selectClass(el, name) { document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); student.class = name; }
@@ -241,6 +261,28 @@ function render() {
     }
     box.innerHTML = h;
     document.getElementById('finalSubmit').style.display = (solved >= 30) ? 'block' : 'none';
+    if(p.type === 'drag-all') {
+        Object.keys(p.a).forEach(k => { 
+            if(userAnswers[k]) {
+                let boxSpan = document.getElementById(k);
+                if(boxSpan) {
+                    if(boxSpan.querySelector('input')) {
+                        boxSpan.querySelector('input').value = userAnswers[k];
+                    } else {
+                        boxSpan.innerText = userAnswers[k];
+                    }
+                }
+            }
+        });
+        // Re-attach click handlers after render
+        for(let i=27; i<=30; i++) {
+            let id = 'z' + i;
+            let el = document.getElementById(id);
+            if(el && !el.querySelector('input')) {
+                el.onclick = function() { makeEditable(id); };
+            }
+        }
+    }
 }
 
 function countSolved() {
@@ -252,10 +294,7 @@ function countSolved() {
 
 function save(id, val) { 
     userAnswers[id] = val; 
-    const options = event.currentTarget.parentElement.children;
-    for(let opt of options) opt.classList.remove('selected');
-    event.currentTarget.classList.add('selected');
-    document.getElementById('finalSubmit').style.display = (countSolved() >= 30) ? 'block' : 'none';
+    render();
 }
 
 function changeQ(d) { cur += d; if(cur<0) cur=examPages.length-1; if(cur>=examPages.length) cur=0; render(); window.scrollTo(0,0); }
@@ -263,7 +302,73 @@ function deferQuestion() { let p = examPages.splice(cur, 1)[0]; examPages.push(p
 
 function allow(e) { e.preventDefault(); }
 function drag(e) { e.dataTransfer.setData("text", e.target.id); }
-function drop(e) { e.preventDefault(); let word = e.dataTransfer.getData("text"); e.target.innerText = word; userAnswers[e.target.id] = word; document.getElementById('finalSubmit').style.display = (countSolved() >= 30) ? 'block' : 'none'; }
+function drop(e) { 
+    e.preventDefault(); 
+    let word = e.dataTransfer.getData("text"); 
+    let targetId = e.target.id;
+    // Check if target is the drop-box or its child
+    if(!targetId || !targetId.startsWith('z')) {
+        let parent = e.target.closest('.drop-box');
+        if(parent) targetId = parent.id;
+        else return;
+    }
+    e.target.innerText = word; 
+    userAnswers[targetId] = word; 
+    render(); 
+}
+
+// New function to make drop-boxes editable via keyboard
+function makeEditable(id) {
+    let box = document.getElementById(id);
+    if(!box) return;
+    
+    // If already has input, just focus it
+    let existingInput = box.querySelector('input');
+    if(existingInput) {
+        existingInput.focus();
+        return;
+    }
+    
+    let currentValue = userAnswers[id] || '';
+    let input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentValue;
+    input.style.background = 'transparent';
+    input.style.border = 'none';
+    input.style.color = 'var(--s)';
+    input.style.fontWeight = 'bold';
+    input.style.textAlign = 'center';
+    input.style.width = '100%';
+    input.style.outline = 'none';
+    input.style.fontSize = '1rem';
+    input.style.fontFamily = 'Cairo, sans-serif';
+    
+    input.addEventListener('blur', function() {
+        let newValue = input.value.trim();
+        if(newValue) {
+            userAnswers[id] = newValue;
+            box.innerHTML = newValue;
+        } else if(!newValue && currentValue) {
+            delete userAnswers[id];
+            box.innerHTML = '';
+        } else {
+            box.innerHTML = '';
+        }
+        // Re-attach click handler
+        box.onclick = function() { makeEditable(id); };
+        render(); // Re-render to update global state
+    });
+    
+    input.addEventListener('keypress', function(e) {
+        if(e.key === 'Enter') {
+            input.blur();
+        }
+    });
+    
+    box.innerHTML = '';
+    box.appendChild(input);
+    input.focus();
+}
 
 function confirmFinish() { if(confirm("هل أنت متأكد من إنهاء الاختبار؟")) finish(); }
 
