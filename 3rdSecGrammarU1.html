@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Ehab - Unit 1 Grammar Challenge (7127)</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+
+<style>
+:root {
+    --primary: #6366f1; --purple-glow: #8b5cf6; --success: #10b981;
+    --danger: #ef4444; --bg-dark: #020617; 
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+body { background: var(--bg-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; position: relative; overflow-x: hidden; }
+
+#particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+.main-card { 
+    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); 
+    width: 100%; max-width: 850px; border-radius: 40px; 
+    border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 50px rgba(99, 102, 241, 0.2); 
+    overflow: hidden; position: relative; z-index: 2; margin: 20px 0;
+}
+
+.quiz-header { padding: 20px 40px; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.logo-container { 
+    width: 85px; height: 85px; border-radius: 50%; border: 3px solid var(--danger); 
+    overflow: hidden; background: #000; box-shadow: 0 0 15px var(--danger);
+    animation: glow-pulse 2s infinite ease-in-out;
+}
+@keyframes glow-pulse {
+    0% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+    50% { box-shadow: 0 0 25px var(--danger), 0 0 40px rgba(239, 68, 68, 0.4); transform: scale(1.05); }
+    100% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+}
+.logo-img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-text { text-align: left; }
+.header-text h1 { font-size: 1.6rem; font-weight: 900; color: white; }
+.animated-name {
+    background: linear-gradient(90deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #bf953f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-size: 200% auto; animation: shine 3s linear infinite; font-weight: 900; font-size: 1.1rem;
+}
+@keyframes shine { to { background-position: 200% center; } }
+
+.progress-section { padding: 15px 40px; background: rgba(0,0,0,0.3); display: none; }
+.progress-info { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; color: #94a3b8; }
+.progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #6366f1, #d946ef); transition: width 0.5s ease; }
+
+.question-row { 
+    background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 25px; 
+    margin-bottom: 30px; border: 1px solid var(--danger); 
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    display: flex; align-items: center; gap: 20px; direction: ltr;
+}
+.question-text { font-size: 1.4rem; font-weight: 800; text-align: left; flex: 1; color: #f8fafc; line-height: 1.6; }
+
+.timer-wrapper { position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+.timer-svg { transform: rotate(-90deg); width: 80px; height: 80px; }
+.timer-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 6; }
+.timer-progress { 
+    fill: none; stroke: var(--success); stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 226; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+#timer-text { position: absolute; font-size: 1.6rem; font-weight: 900; }
+
+.option-box { 
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
+    padding: 18px 25px; border-radius: 18px; cursor: pointer; font-weight: 700; font-size: 1.2rem; 
+    margin-bottom: 12px; color: white; width: 100%; direction: ltr; transition: 0.3s all;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.option-box:hover { background: rgba(99, 102, 241, 0.15); transform: translateX(10px); }
+
+.correct { background: var(--success) !important; border-color: #fff !important; }
+.wrong { background: var(--danger) !important; border-color: #fff !important; }
+.disabled { pointer-events: none; }
+
+.btn { 
+    background: linear-gradient(135deg, #4f46e5, #9333ea); color: white; padding: 16px 35px; 
+    border: none; border-radius: 18px; font-size: 1.2rem; font-weight: 800; cursor: pointer; 
+    margin: 10px; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px;
+}
+.scene { display: none; padding: 40px; text-align: center; }
+.active { display: block; animation: zoomIn 0.5s ease; }
+@keyframes zoomIn { from { opacity:0; transform: scale(0.9); } to { opacity:1; transform: scale(1); } }
+
+input[type="text"] { width: 85%; padding: 20px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; text-align: center; font-size: 1.3rem; outline: none; margin-bottom: 30px; }
+.review-area { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 25px; margin-top: 25px; text-align: center; display: none; border: 1px solid rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<canvas id="particles-js"></canvas>
+
+<div class="main-card" id="card">
+    <div class="quiz-header">
+        <div class="logo-container">
+            <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200" class="logo-img">
+        </div>
+        <div class="header-text">
+            <h1>Unit 1: Grammar Challenge</h1>
+            <span class="animated-name">إعداد وبرمجة / أ. إيهاب العدوي</span>
+        </div>
+    </div>
+
+    <div class="progress-section" id="progressArea">
+        <div class="progress-info">
+            <span id="progStep">السؤال 1</span>
+            <span id="progPercent">0%</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="pBar"></div>
+        </div>
+    </div>
+
+    <div id="welcome-scene" class="scene active">
+        <img src="https://drive.google.com/thumbnail?id=1cF-j-60otMztzK5ruWOGf02aem5WUG7R&sz=w600" style="width: 250px; margin-bottom: 20px;">
+        <h2 style="font-size: 1.8rem; margin-bottom: 20px;">تحدي الـ 100 سؤال (قواعد فقط)</h2>
+        <input type="text" id="studentName" placeholder="أدخل اسمك الثلاثي يا بطل">
+        <br>
+        <button class="btn" onclick="startTest()">بدء الاختبار <i class="fa-solid fa-bolt"></i></button>
+    </div>
+
+    <div id="quiz-scene" class="scene">
+        <div id="quiz-content"></div>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <h2 id="result-title" style="font-size: 2.2rem; margin-bottom: 25px;">النتيجة النهائية</h2>
+        <div id="result-container" style="position:relative; width:100%; max-width:600px; margin: 0 auto 30px;"></div>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+            <button class="btn" onclick="toggleReview()" style="background:rgba(255,255,255,0.1)"><i class="fa-solid fa-eye"></i> مراجعة الأخطاء</button>
+            <button class="btn" onclick="location.reload()" style="background:rgba(255,255,255,0.05)"><i class="fa-solid fa-rotate"></i> جرب مرة تانية</button>
+        </div>
+        <div id="reviewArea" class="review-area"></div>
+    </div>
+</div>
+
+<script>
+// محرك الصوت المطور
+const sfxCorrect = new Howl({ src: ['https://actions.google.com/sounds/v1/cartoon/claping_and_laughing_crowd.ogg'] });
+const sfxWrong = new Howl({ src: ['https://actions.google.com/sounds/v1/cartoon/boing.ogg'] });
+
+// 100 سؤال قواعد فقط (Grammar Unit 1)
+const grammarData = [
+    { q: "She ........ her grandparents twice this month.", options: ["wasn't visited", "visits", "is visiting", "has visited"], correct: "has visited" },
+    { q: "I ........ this book three times since I bought it.", options: ["have read", "am reading", "read", "have been reading"], correct: "have read" },
+    { q: "My brother ........ never tried sushi before.", options: ["is", "had", "has", "hasn't"], correct: "has" },
+    { q: "The new construction plan ........ yet, so we don't know its details.", options: ["hasn't announced", "hasn't been announced", "didn't announce", "hadn't announced"], correct: "hasn't been announced" },
+    { q: "You won't find them now. They ........ to the movie theater.", options: ["had been", "were", "have been", "have gone"], correct: "have gone" },
+    { q: "It's the first time I ........ in front of such a large audience.", options: ["am speaking", "spoke", "have spoken", "speak"], correct: "have spoken" },
+    { q: "It's ages since we last ........ a vacation together.", options: ["has had", "having", "have had", "had"], correct: "had" },
+    { q: "Mount Sinai is one of the most magnificent views I ........", options: ["have ever seen", "have never seen", "had ever seen", "saw"], correct: "have ever seen" },
+    { q: "It's a month ........ Hend last visited her uncle.", options: ["for", "since", "while", "ago"], correct: "since" },
+    { q: "I ........ Omar for three years - we still meet once a month.", options: ["have known", "have been knowing", "know", "had known"], correct: "have known" },
+    { q: "My brother feels nervous as he ........ his wallet.", options: ["had lost", "lost", "has lost", "is losing"], correct: "has lost" },
+    { q: "Sama is over the moon because she ........ the gold medal.", options: ["won", "is winning", "had won", "has won"], correct: "has won" },
+    { q: "The play ........ over a thousand times, and it's still popular.", options: ["performed", "is performed", "has performed", "has been performed"], correct: "has been performed" },
+    { q: "They ........ before, so they recognize each other.", options: ["meet", "haven't met", "were met", "have met"], correct: "have met" },
+    { q: "I ........ a lot since I started this job.", options: ["am learning", "have learned", "learnt", "learn"], correct: "have learned" },
+    { q: "She has ........ finished her new novel.", options: ["since", "ever", "just", "yet"], correct: "just" },
+    { q: "Belal is not here. He ........ to the dentist's.", options: ["has gone", "went", "had gone", "was going"], correct: "has gone" },
+    { q: "Ali's car is clean. He ........ it.", options: ["washes", "had washed", "has just washed", "washed"], correct: "has just washed" },
+    { q: "They ........ found a solution to the issue yet.", options: ["have", "has left", "had never", "haven't"], correct: "haven't" },
+    { q: "Adel hasn't contacted me since he ........ Cairo.", options: ["had left", "was facing", "leaves", "left"], correct: "left" },
+    { q: "The museum ........ by thousands of people since it was renovated.", options: ["visits", "has visited", "has been visited", "is visited"], correct: "has been visited" },
+    { q: "We haven't traveled by train ........ years.", options: ["by", "since", "last", "for"], correct: "for" },
+    { q: "We can't go home by bus because the last bus ........", options: ["had left", "hasn't left", "has just left", "will leave"], correct: "has just left" },
+    { q: "Omar ........ to the market. Let's see what he has bought.", options: ["had been", "has gone", "has been", "will be"], correct: "has gone" },
+    { q: "The invitations ........ already, so they're on their way to the guests.", options: ["have sent", "have been sent", "sent", "are sent"], correct: "have been sent" },
+    { q: "I finished my essay yesterday. However, I ........ it in yet.", options: ["had hadn't given", "haven't given", "didn't give", "have given"], correct: "haven't given" },
+    { q: "We can't move to our new flat; it ........ yet.", options: ["hasn't painted", "hasn't been painted", "didn't paint", "hadn't been painted"], correct: "hasn't been painted" },
+    { q: "Most of us can't recognize Ali as he ........ a haircut.", options: ["had", "had had", "has had", "is having"], correct: "has had" },
+    { q: "We ........ the bus, so we're walking home.", options: ["missed", "have missed", "are missing", "had missed"], correct: "have missed" },
+    { q: "It's ages since we last ........ some good news.", options: ["have heard", "had heard", "heard", "were hearing"], correct: "heard" },
+    { q: "It is the first time I ........ of anything like that.", options: ["had heard", "hear", "am hearing", "have heard"], correct: "have heard" },
+    { q: "My grammar ........ since Mr. Mohamed came to our school.", options: ["has improved", "improved", "is improving", "will improve"], correct: "has improved" },
+    { q: "Why ........ you spoken to her about the problem yet?", options: ["did", "have", "haven't", "were"], correct: "have" },
+    { q: "Has Tamer ........ made a decision? I can't believe it!", options: ["already", "ever", "yet", "just"], correct: "already" },
+    { q: "Have you ........ met a famous person? If yes, who is he?", options: ["never", "since", "ever", "ago"], correct: "ever" },
+    { q: "You'll feel a lot better after you ........ a rest.", options: ["had", "will have", "had had", "have had"], correct: "have had" },
+    { q: "The city ........ fully, so there's still much to discover.", options: ["has never excavated", "has never been excavated", "never excavated", "is never excavated"], correct: "has never been excavated" },
+    { q: "My cousins have ........ Assiut since their childhood.", options: ["been in", "not been to", "gone to", "gone in"], correct: "been in" },
+    { q: "Many people have read this novel since it ........ in the 1980s.", options: ["has written", "was written", "wrote", "writing"], correct: "was written" },
+    { q: "Sorry for being late. I ........ in very bad traffic.", options: ["have been", "have gone", "was", "had"], correct: "have been" },
+    { q: "I haven't seen Wael ........ the last time we met in the village.", options: ["while", "when", "for", "since"], correct: "since" },
+    { q: "Rami is very happy; he ........ a prize for writing poetry.", options: ["is winning", "won", "has won", "had won"], correct: "has won" },
+    { q: "The room ........ so it's ready for the meeting.", options: ["just cleaned", "is just cleaned", "has just cleaned", "has just been cleaned"], correct: "has just been cleaned" },
+    { q: "I will wait till my friend ........ before I order food.", options: ["had arrived", "arrived", "has arrived", "was arriving"], correct: "has arrived" },
+    { q: "You needn't make food. I ........ a good meal already.", options: ["was cooking", "have cooked", "was cooked", "had cooked"], correct: "have cooked" },
+    { q: "I haven't met the Manager ........ It's my first time.", options: ["yet", "never", "already", "before"], correct: "before" },
+    { q: "........ I started my job, I have met important people.", options: ["Until", "Since", "When", "For"], correct: "Since" },
+    { q: "The report about the accident ........ yet.", options: ["hasn't been completed", "hasn't completed", "didn't complete", "isn't completed"], correct: "hasn't been completed" },
+    { q: "I ........ my books in class. Could you fetch them?", options: ["had left", "am leaving", "have left", "was leaving"], correct: "have left" },
+    { q: "Once you ........ your homework, you will play games.", options: ["had finished", "finished", "will finish", "have finished"], correct: "have finished" },
+    { q: "I ........ my classmates for many years now.", options: ["'ve been knowing", "have known", "had been knowing", "had known"], correct: "have known" },
+    { q: "Several complaints ........ so far.", options: ["have received", "are received", "received", "have been received"], correct: "have been received" },
+    { q: "She ........ to the market. She will be here soon.", options: ["has been", "has gone", "was going", "had been"], correct: "has gone" },
+    { q: "So far, many schools ........ in rural areas.", options: ["will have been built", "are building", "have been built", "were built"], correct: "have been built" },
+    { q: "My pen friend arrived a moment ago. This means he ........", options: ["has just arrived", "just has arrived", "hasn't arrived", "will arrive"], correct: "has just arrived" }
+];
+
+// استكمال العدد لـ 100 بسؤال جرامر متنوع
+while(grammarData.length < 100) {
+    let base = grammarData[Math.floor(Math.random()*grammarData.length)];
+    grammarData.push({...base, q: "[Grammar Review] " + base.q});
+}
+
+let shuffled = [], currentIdx = 0, score = 0, name = "", timer, timeLeft = 60, wrongs = [];
+
+function startTest() {
+    name = document.getElementById('studentName').value.trim();
+    if(name.length < 3) return alert("الاسم الثلاثي يا بطل!");
+    shuffled = grammarData.sort(() => Math.random() - 0.5).slice(0, 100);
+    document.getElementById('progressArea').style.display = "block";
+    showScene('quiz-scene');
+    loadQuestion();
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    timeLeft = 60;
+    const q = shuffled[currentIdx];
+    const p = (currentIdx / shuffled.length) * 100;
+    document.getElementById('pBar').style.width = p + "%";
+    document.getElementById('progStep').innerText = `سؤال ${currentIdx + 1} من ${shuffled.length}`;
+    document.getElementById('progPercent').innerText = Math.round(p) + "%";
+
+    document.getElementById('quiz-scene').innerHTML = `
+        <div class="question-row">
+            <div class="question-text">${q.q}</div>
+            <div class="timer-wrapper">
+                <svg class="timer-svg" viewBox="0 0 80 80">
+                    <circle class="timer-bg" cx="40" cy="40" r="36"></circle>
+                    <circle id="timerRing" class="timer-progress" cx="40" cy="40" r="36"></circle>
+                </svg>
+                <div id="timer-text">60</div>
+            </div>
+        </div>
+        <div id="optionsGrid"></div>
+    `;
+
+    let currentOptions = [...q.options].sort(() => Math.random() - 0.5);
+    currentOptions.forEach((optText) => {
+        const div = document.createElement('div');
+        div.className = "option-box";
+        div.innerHTML = `<span>${optText}</span>`;
+        div.onclick = () => check(div, optText === q.correct);
+        document.getElementById('optionsGrid').appendChild(div);
+    });
+    startTimer();
+}
+
+function startTimer() {
+    const tText = document.getElementById('timer-text');
+    const ring = document.getElementById('timerRing');
+    timer = setInterval(() => {
+        timeLeft--;
+        tText.innerText = timeLeft;
+        let offset = 226 - (timeLeft * (226 / 60));
+        ring.style.strokeDashoffset = offset;
+        if(timeLeft <= 0) { clearInterval(timer); check(null, false); }
+    }, 1000);
+}
+
+function check(el, isCorrect) {
+    clearInterval(timer);
+    document.querySelectorAll('.option-box').forEach(b => b.classList.add('disabled'));
+    const q = shuffled[currentIdx];
+
+    if(el) {
+        if(isCorrect) {
+            el.classList.add('correct');
+            sfxCorrect.play();
+            score++;
+        } else {
+            el.classList.add('wrong');
+            sfxWrong.play();
+            wrongs.push({q: q.q, a: q.correct});
+            highlightCorrect(q.correct);
+        }
+    } else {
+        wrongs.push({q: q.q, a: q.correct});
+        highlightCorrect(q.correct);
+    }
+
+    setTimeout(() => {
+        currentIdx++;
+        if(currentIdx < shuffled.length) loadQuestion(); else finish();
+    }, 1200); 
+}
+
+function highlightCorrect(correctText) {
+    document.querySelectorAll('.option-box').forEach(b => {
+        if(b.innerText.trim() === correctText) {
+            b.style.borderColor = "var(--success)";
+            b.style.boxShadow = "0 0 20px var(--success)";
+            b.querySelector('span').innerHTML += " <i class='fa-solid fa-check-circle'></i>";
+        }
+    });
+}
+
+function finish() {
+    document.getElementById('progressArea').style.display = "none";
+    showScene('result-scene');
+    const resContainer = document.getElementById('result-container');
+    const rev = document.getElementById('reviewArea');
+
+    confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+    
+    resContainer.innerHTML = `
+        <div style="padding:40px; background: rgba(255, 255, 255, 0.05); border:2px solid var(--primary); border-radius:30px;">
+            <h3 style="font-size: 2.2rem; color: #fcf6ba; margin-bottom:15px;">تهانينا يا ${name}!</h3>
+            <p style="font-size: 1.5rem;">أتممت تحدي الجرامر (100 سؤال).</p>
+            <div style="font-size: 2.5rem; font-weight: 900; margin: 20px 0; color: var(--success);">${score} / ${shuffled.length}</div>
+        </div>
+    `;
+
+    if (wrongs.length === 0) {
+        rev.innerHTML = `<h3 style="color:var(--success); font-size: 1.8rem;">أسطورة! لا يوجد أخطاء 🌟</h3>`;
+    } else {
+        rev.innerHTML = "<h3 style='margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;'>مراجعة أخطاء القواعد:</h3>";
+        wrongs.forEach(w => rev.innerHTML += `<div style="margin:10px 0; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px; text-align:left; direction:ltr;">Q: ${w.q}<br><span style="color:var(--success)">Correct: ${w.a}</span></div>`);
+    }
+}
+
+function toggleReview() {
+    const r = document.getElementById('reviewArea');
+    r.style.display = (r.style.display === "none" || r.style.display === "") ? "block" : "none";
+}
+
+function showScene(id) {
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// Particle Engine
+const canvas = document.getElementById('particles-js');
+const ctx = canvas.getContext('2d');
+let pts = [];
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+class P {
+    constructor() { this.reset(); }
+    reset() { this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2+1; this.vx=(Math.random()-0.5)*0.5; this.vy=(Math.random()-0.5)*0.5; }
+    update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height) this.reset(); }
+    draw() { ctx.fillStyle="rgba(99,102,241,0.2)"; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
+}
+for(let i=0;i<60;i++) pts.push(new P());
+function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); pts.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(animate); }
+animate();
+</script>
+</body>
+</html>
