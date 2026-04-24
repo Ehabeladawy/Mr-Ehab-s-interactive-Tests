@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Ehab - Full Unit 2 Challenge (7127)</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+    --primary: #6366f1; --purple-glow: #8b5cf6; --success: #10b981;
+    --danger: #ef4444; --bg-dark: #020617; 
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+body { background: var(--bg-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; position: relative; overflow-x: hidden; }
+
+#particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+.main-card { 
+    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); 
+    width: 100%; max-width: 850px; border-radius: 40px; 
+    border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 50px rgba(99, 102, 241, 0.2); 
+    overflow: hidden; position: relative; z-index: 2; margin: 20px 0;
+}
+
+.quiz-header { padding: 20px 40px; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.logo-container { 
+    width: 85px; height: 85px; border-radius: 50%; border: 3px solid var(--danger); 
+    overflow: hidden; background: #000; box-shadow: 0 0 15px var(--danger);
+    animation: glow-pulse 2s infinite ease-in-out;
+}
+@keyframes glow-pulse {
+    0% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+    50% { box-shadow: 0 0 25px var(--danger), 0 0 40px rgba(239, 68, 68, 0.4); transform: scale(1.05); }
+    100% { box-shadow: 0 0 5px var(--danger); transform: scale(1); }
+}
+.logo-img { width: 100%; height: 100%; object-fit: cover; }
+
+.header-text { text-align: left; }
+.header-text h1 { font-size: 1.6rem; font-weight: 900; color: white; }
+.animated-name {
+    background: linear-gradient(90deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #bf953f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-size: 200% auto; animation: shine 3s linear infinite; font-weight: 900; font-size: 1.1rem;
+}
+@keyframes shine { to { background-position: 200% center; } }
+
+.progress-section { padding: 15px 40px; background: rgba(0,0,0,0.3); display: none; }
+.progress-info { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; color: #94a3b8; }
+.progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #6366f1, #d946ef); transition: width 0.5s ease; }
+
+.question-row { 
+    background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 25px; 
+    margin-bottom: 15px; border: 1px solid var(--danger); 
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    display: flex; align-items: center; gap: 20px; direction: ltr;
+}
+.question-text { font-size: 1.3rem; font-weight: 800; text-align: left; flex: 1; color: #f8fafc; line-height: 1.6; }
+
+.correct-answer-feedback {
+    background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 15px; border-radius: 15px;
+    margin-bottom: 20px; font-weight: 700; font-size: 1.2rem; border: 1px solid var(--success);
+    display: none; animation: slideIn 0.3s ease; direction: ltr; text-align: left;
+}
+@keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.timer-wrapper { position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+.timer-svg { transform: rotate(-90deg); width: 80px; height: 80px; }
+.timer-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 6; }
+.timer-progress { 
+    fill: none; stroke: var(--success); stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 226; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+#timer-text { position: absolute; font-size: 1.6rem; font-weight: 900; }
+
+.option-box { 
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); 
+    padding: 18px 25px; border-radius: 18px; cursor: pointer; font-weight: 700; font-size: 1.2rem; 
+    margin-bottom: 12px; color: white; width: 100%; direction: ltr; transition: 0.3s all;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.option-box:hover { background: rgba(99, 102, 241, 0.15); transform: translateX(10px); }
+
+.correct { background: var(--success) !important; border-color: #fff !important; }
+.wrong { background: var(--danger) !important; border-color: #fff !important; }
+.disabled { pointer-events: none; }
+
+.btn { 
+    background: linear-gradient(135deg, #4f46e5, #9333ea); color: white; padding: 16px 35px; 
+    border: none; border-radius: 18px; font-size: 1.2rem; font-weight: 800; cursor: pointer; 
+    margin: 10px; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px;
+}
+.scene { display: none; padding: 40px; text-align: center; }
+.active { display: block; animation: zoomIn 0.5s ease; }
+@keyframes zoomIn { from { opacity:0; transform: scale(0.9); } to { opacity:1; transform: scale(1); } }
+
+input[type="text"] { width: 85%; padding: 20px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; text-align: center; font-size: 1.3rem; outline: none; margin-bottom: 30px; }
+.review-area { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 25px; margin-top: 25px; text-align: center; display: none; border: 1px solid rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<canvas id="particles-js"></canvas>
+
+<div class="main-card" id="card">
+    <div class="quiz-header">
+        <div class="logo-container">
+            <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200" class="logo-img">
+        </div>
+        <div class="header-text">
+            <h1>Unit 2: Comprehensive Vocabulary</h1>
+            <span class="animated-name">إعداد وبرمجة / أ. إيهاب العدوي</span>
+        </div>
+    </div>
+
+    <div class="progress-section" id="progressArea">
+        <div class="progress-info">
+            <span id="progStep">السؤال 1</span>
+            <span id="progPercent">0%</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="pBar"></div>
+        </div>
+    </div>
+
+    <div id="welcome-scene" class="scene active">
+        <img src="https://drive.google.com/thumbnail?id=1cF-j-60otMztzK5ruWOGf02aem5WUG7R&sz=w600" style="width: 250px; margin-bottom: 20px;">
+        <h2 style="font-size: 1.8rem; margin-bottom: 20px;">الاختبار الشامل (70+ سؤال كلمات)</h2>
+        <input type="text" id="studentName" placeholder="أدخل اسمك الثلاثي يا بطل">
+        <br>
+        <button class="btn" onclick="startTest()">بدء التحدي <i class="fa-solid fa-bolt"></i></button>
+    </div>
+
+    <div id="quiz-scene" class="scene">
+        <div id="quiz-content"></div>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <h2 id="result-title" style="font-size: 2.2rem; margin-bottom: 25px;">النتيجة النهائية</h2>
+        <div id="result-container" style="position:relative; width:100%; max-width:600px; margin: 0 auto 30px;"></div>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+            <button class="btn" onclick="toggleReview()" style="background:rgba(255,255,255,0.1)"><i class="fa-solid fa-eye"></i> مراجعة الأخطاء</button>
+            <button class="btn" onclick="location.reload()" style="background:rgba(255,255,255,0.05)"><i class="fa-solid fa-rotate"></i> جرب مرة تانية</button>
+        </div>
+        <div id="reviewArea" class="review-area"></div>
+    </div>
+</div>
+
+<audio id="sound-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+<audio id="sound-wrong" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
+
+<script>
+// 7127 - FULL DATA POOL (72 VOCAB QUESTIONS - NO GRAMMAR)
+const quizData = [
+    // --- Definitions & Key Vocab ---
+    { q: "A ruling family is called a/an ............ .", options: ["infrastructure", "dynasty", "partnership", "initiative"], correct: "dynasty" },
+    { q: "The ............ is the basic systems and services that a country needs.", options: ["foundation", "automation", "infrastructure", "structure"], correct: "infrastructure" },
+    { q: "To ............ is to find out why something is not working and fix it.", options: ["scan", "adopt", "revolutionize", "troubleshoot"], correct: "troubleshoot" },
+    { q: "A ............ is a machine that separates cotton fibers from seeds.", options: ["lever", "gin", "driver", "version"], correct: "gin" },
+    { q: "The museum shows ancient ............ that were considered technological marvels.", options: ["versions", "artifacts", "drivers", "cables"], correct: "artifacts" },
+    { q: "The discovery was a ............ achievement in the field of science.", options: ["minor", "monumental", "simple", "lowly"], correct: "monumental" },
+    { q: "Smartphones continue to ............ the way people communicate.", options: ["revolutionize", "slow", "damage", "ignore"], correct: "revolutionize" },
+    { q: "We need to ............ the old computer with a newer model.", options: ["replace", "adopt", "fix", "keep"], correct: "replace" },
+    { q: "The security system uses ............ technology to keep things safe.", options: ["simple", "sophisticated", "ancient", "basic"], correct: "sophisticated" },
+    { q: "The newest ............ of the software has many new features.", options: ["version", "vision", "division", "driver"], correct: "version" },
+    { q: "The two companies formed a strong ............ to develop a new product.", options: ["rivalry", "partnership", "argument", "split"], correct: "partnership" },
+    { q: "Solar power is a great example of a ............ energy source.", options: ["non-renewable", "renewable", "fossil", "manual"], correct: "renewable" },
+    { q: "The government launched an ............ to promote digital literacy.", options: ["initiative", "urgency", "automation", "infrastructure"], correct: "initiative" },
+    { q: "A ............ is a person whose job is to check and repair equipment.", options: ["manager", "technician", "driver", "innovator"], correct: "technician" },
+    { q: "To ............ a new system means to start using it.", options: ["adopt", "adapt", "reject", "replace"], correct: "adopt" },
+    { q: "The rescue team acted with great ............ to save the workers.", options: ["laziness", "urgency", "delay", "calm"], correct: "urgency" },
+    
+    // --- Synonyms & Antonyms ---
+    { q: "The synonym of the word 'monumental' is ............ .", options: ["minor", "massive", "small", "unimportant"], correct: "massive" },
+    { q: "The antonym of 'monumental' is ............ .", options: ["huge", "minor", "important", "great"], correct: "minor" },
+    { q: "The synonym of 'basic' is ............ .", options: ["complex", "foundational", "secondary", "advanced"], correct: "foundational" },
+    { q: "The antonym of 'enhance' is ............ .", options: ["improve", "weaken", "strengthen", "build"], correct: "weaken" },
+    { q: "The synonym of 'sophisticated' is ............ .", options: ["simple", "complex", "easy", "plain"], correct: "complex" },
+    { q: "The antonym of 'renewable' is ............ .", options: ["green", "nonrenewable", "clean", "infinite"], correct: "nonrenewable" },
+    { q: "The word 'replace' is a synonym for ............ .", options: ["keep", "substitute", "ignore", "find"], correct: "substitute" },
+    { q: "The antonym of 'urgency' is ............ .", options: ["haste", "leisure", "speed", "importance"], correct: "leisure" },
+    { q: "The synonym of 'innovative' is ............ .", options: ["old", "creative", "basic", "simple"], correct: "creative" },
+    { q: "The antonym of 'smart' is ............ .", options: ["clever", "stupid", "wise", "bright"], correct: "stupid" },
+    
+    // --- Word Families & Prepositions ---
+    { q: "Her approach to solving the problem was highly ............ .", options: ["innovation", "innovative", "innovate", "innovator"], correct: "innovative" },
+    { q: "Egypt looked ............ the future with confidence.", options: ["at", "to", "for", "by"], correct: "to" },
+    { q: "People worry ............ the impact of artificial intelligence.", options: ["on", "about", "of", "from"], correct: "about" },
+    { q: "The city plans to enhance its parks ............ new trees.", options: ["of", "with", "for", "at"], correct: "with" },
+    { q: "The negotiations have come ............ a standstill.", options: ["to", "at", "for", "in"], correct: "to" },
+    { q: "Robots may soon ............ over the jobs of factory workers.", options: ["take", "get", "come", "look"], correct: "take" },
+    { q: "Modern technology has ............ revolutionary changes.", options: ["made for", "brought about", "taken up", "looked after"], correct: "brought about" },
+    { q: "The verb 'scan' means to read something ............ .", options: ["slowly", "carefully", "quickly", "hardly"], correct: "quickly" },
+    { q: "He has a great influence ............ the students.", options: ["on", "about", "at", "to"], correct: "on" },
+    { q: "The company is planning to ........ new software.", options: ["adapt", "adopt", "reject", "ignore"], correct: "adopt" },
+    
+    // --- General Exercises ---
+    { q: "The Great Pyramid is a/an ............ of engineering.", options: ["marvel", "gin", "driver", "infrastructure"], correct: "marvel" },
+    { q: "Steam ............ were used during the Industrial Revolution.", options: ["engines", "cables", "drivers", "ramps"], correct: "engines" },
+    { q: "The building has wheelchair ............ for accessibility.", options: ["ramps", "stairs", "cables", "links"], correct: "ramps" },
+    { q: "Farmers use ............ to help grow crops more efficiently.", options: ["agriculture", "automation", "dynasties", "marvels"], correct: "automation" },
+    { q: "Cotton ............ are exported from Egypt all over the world.", options: ["fibers", "cables", "drivers", "gin"], correct: "fibers" },
+    { q: "We should use more ............ energy like solar and wind.", options: ["nonrenewable", "clean", "fossil", "ancient"], correct: "clean" },
+    { q: "You need to ............ the mouse to see the menu.", options: ["left-click", "right-click", "troubleshoot", "replace"], correct: "right-click" },
+    { q: "A computer ............ is needed for the hardware to work.", options: ["cable", "driver", "gin", "ramp"], correct: "driver" },
+    { q: "The Internet has become a vital part of our ............ .", options: ["infrastructure", "dynasty", "artifact", "gin"], correct: "infrastructure" },
+    { q: "He is a ............ who specializes in fixing networks.", options: ["technician", "laborer", "artifact", "dynasty"], correct: "technician" },
+    { q: "There is a sense of ............ to solve the climate crisis.", options: ["leisure", "urgency", "automation", "calm"], correct: "urgency" },
+    { q: "Ancient Egyptians ............ many innovations in agriculture.", options: ["developed", "rejected", "troubleshot", "scanned"], correct: "developed" },
+    { q: "Can you ............ why the screen is blank?", options: ["adopt", "troubleshoot", "right-click", "replace"], correct: "troubleshoot" },
+    { q: "This ............ helps me measure the room temperature.", options: ["artifact", "device", "driver", "gin"], correct: "device" },
+    { q: "The Industrial Revolution started in ............ .", options: ["Egypt", "Britain", "USA", "France"], correct: "Britain" },
+    { q: "Coal and Oil are ............ fuels.", options: ["renewable", "fossil", "clean", "water"], correct: "fossil" },
+    { q: "To ............ a style means to combine different elements.", options: ["blend", "divide", "break", "separate"], correct: "blend" },
+    { q: "Which word means 'the work done by people'?", options: ["automation", "labor", "innovation", "machinery"], correct: "labor" },
+    { q: "The antonym of 'automation' is ............ .", options: ["machinery", "manual work", "speed", "robotics"], correct: "manual work" },
+    { q: "A 'monumental' change is a ............ change.", options: ["very small", "very large", "bad", "useless"], correct: "very large" },
+    { q: "The pharaohs belonged to different ............ .", options: ["dynasties", "partnerships", "automations", "ramps"], correct: "dynasties" },
+    { q: "The synonym of 'replace' is ............ .", options: ["exchange", "keep", "destroy", "lose"], correct: "exchange" },
+    { q: "The synonym of 'fascinating' is ............ .", options: ["boring", "interesting", "complex", "simple"], correct: "interesting" },
+    { q: "The synonym of 'reliable' is ............ .", options: ["unstable", "dependable", "fast", "slow"], correct: "dependable" },
+    { q: "The antonym of 'complicated' is ............ .", options: ["complex", "sophisticated", "simple", "hard"], correct: "simple" },
+    { q: "Technological ............ have improved our lives.", options: ["mistakes", "problems", "advances", "errors"], correct: "advances" },
+    { q: "The team worked together in ........ with local firms.", options: ["partnership", "rivalry", "isolation", "anger"], correct: "partnership" },
+    { q: "We need a ........ plan to solve this crisis.", options: ["weak", "minor", "solid", "unimportant"], correct: "solid" },
+    { q: "The ........ of the machine was very high.", options: ["efficiency", "error", "laziness", "delay"], correct: "efficiency" },
+    { q: "It is ........ that we act now before it's too late.", options: ["optional", "vital", "unnecessary", "minor"], correct: "vital" },
+    { q: "The museum display includes ancient ........ from the Nile valley.", options: ["versions", "artifacts", "cables", "drivers"], correct: "artifacts" },
+    { q: "Our main goal is to ........ the quality of education.", options: ["weaken", "enhance", "ignore", "damage"], correct: "enhance" },
+    { q: "She is a skilled ........ in the IT department.", options: ["laborer", "technician", "artifact", "gin"], correct: "technician" },
+    { q: "The ........ is the first step in the project.", options: ["initiative", "automation", "dynasty", "infrastructure"], correct: "initiative" },
+    { q: "Can you help me ........ this software error?", options: ["adopt", "troubleshoot", "replace", "scan"], correct: "troubleshoot" },
+    { q: "The machine separates the ........ from the seeds.", options: ["fibers", "cables", "drivers", "ramps"], correct: "fibers" }
+];
+
+let shuffled = [], currentIdx = 0, score = 0, name = "", timer, timeLeft = 60, wrongs = [];
+
+function startTest() {
+    name = document.getElementById('studentName').value.trim();
+    if(name.length < 3) return alert("الاسم الثلاثي يا بطل!");
+    shuffled = quizData.sort(() => Math.random() - 0.5);
+    document.getElementById('progressArea').style.display = "block";
+    showScene('quiz-scene');
+    loadQuestion();
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    timeLeft = 60;
+    const q = shuffled[currentIdx];
+    const p = (currentIdx / shuffled.length) * 100;
+    document.getElementById('pBar').style.width = p + "%";
+    document.getElementById('progStep').innerText = `سؤال ${currentIdx + 1} من ${shuffled.length}`;
+    document.getElementById('progPercent').innerText = Math.round(p) + "%";
+
+    document.getElementById('quiz-scene').innerHTML = `
+        <div class="question-row">
+            <div class="question-text">${q.q}</div>
+            <div class="timer-wrapper">
+                <svg class="timer-svg" viewBox="0 0 80 80">
+                    <circle class="timer-bg" cx="40" cy="40" r="36"></circle>
+                    <circle id="timerRing" class="timer-progress" cx="40" cy="40" r="36"></circle>
+                </svg>
+                <div id="timer-text">60</div>
+            </div>
+        </div>
+        <div id="feedback" class="correct-answer-feedback"></div>
+        <div id="optionsGrid"></div>
+    `;
+
+    let currentOptions = [...q.options].sort(() => Math.random() - 0.5);
+    currentOptions.forEach((optText) => {
+        const div = document.createElement('div');
+        div.className = "option-box";
+        div.innerHTML = `<span>${optText}</span>`;
+        div.onclick = () => check(div, optText === q.correct);
+        document.getElementById('optionsGrid').appendChild(div);
+    });
+    startTimer();
+}
+
+function startTimer() {
+    const tText = document.getElementById('timer-text');
+    const ring = document.getElementById('timerRing');
+    timer = setInterval(() => {
+        timeLeft--;
+        tText.innerText = timeLeft;
+        let offset = 226 - (timeLeft * (226 / 60));
+        ring.style.strokeDashoffset = offset;
+        if(timeLeft <= 0) { clearInterval(timer); check(null, false); }
+    }, 1000);
+}
+
+function check(el, isCorrect) {
+    clearInterval(timer);
+    const q = shuffled[currentIdx];
+    const feedback = document.getElementById('feedback');
+    document.querySelectorAll('.option-box').forEach(b => b.classList.add('disabled'));
+
+    if (isCorrect) {
+        el.classList.add('correct');
+        document.getElementById('sound-correct').play();
+        score++;
+        setTimeout(next, 1200);
+    } else {
+        if(el) el.classList.add('wrong');
+        document.getElementById('sound-wrong').play();
+        wrongs.push({q: q.q, a: q.correct});
+        
+        // التصحيح الفوري يظهر هنا
+        feedback.innerHTML = `<i class="fa-solid fa-lightbulb"></i> الإجابة الصحيحة هي: <strong>${q.correct}</strong>`;
+        feedback.style.display = "block";
+        
+        highlightCorrect(q.correct);
+        setTimeout(next, 3500); 
+    }
+}
+
+function highlightCorrect(correctText) {
+    document.querySelectorAll('.option-box').forEach(b => {
+        if(b.innerText.trim() === correctText) {
+            b.style.borderColor = "var(--success)";
+            b.style.boxShadow = "0 0 20px var(--success)";
+            b.querySelector('span').style.color = "var(--success)";
+        }
+    });
+}
+
+function next() {
+    currentIdx++;
+    if(currentIdx < shuffled.length) loadQuestion(); else finish();
+}
+
+function finish() {
+    document.getElementById('progressArea').style.display = "none";
+    showScene('result-scene');
+    const percentage = (score / shuffled.length) * 100;
+    const resContainer = document.getElementById('result-container');
+    const rev = document.getElementById('reviewArea');
+
+    if (percentage >= 50) {
+        confetti({ particleCount: 150, spread: 60 });
+        resContainer.innerHTML = `
+            <img src="https://drive.google.com/thumbnail?id=1yHlVcO1402weXdOCm7Ao6v7cd0mmRffM&sz=w800" style="width:100%; border-radius:30px;">
+            <div style="position:absolute; top:45%; left:50%; transform:translateX(-50%); color:#1e3a8a; font-size:1.8rem; font-weight:900; width:80%;">${name}</div>
+            <div style="position:absolute; top:60%; left:50%; transform:translateX(-50%); color:#dc2626; font-size:1.4rem; font-weight:900;">الدرجة: ${score} من ${shuffled.length}</div>
+        `;
+    } else {
+        resContainer.innerHTML = `<div style="padding:40px; background:rgba(239, 68, 68, 0.1); border:2px solid var(--danger); border-radius:30px;"><h2>ركز يا بطل المرة الجاية!</h2><p>درجتك: ${score} من ${shuffled.length}</p></div>`;
+    }
+
+    if (wrongs.length === 0) {
+        rev.innerHTML = `<h3 style="color:var(--success)">ممتاز! لا يوجد أخطاء</h3>`;
+    } else {
+        rev.innerHTML = "<h3>مراجعة أخطائك:</h3>";
+        wrongs.forEach(w => rev.innerHTML += `<div style="margin:10px 0; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px; text-align:left; direction:ltr;">Q: ${w.q}<br><span style="color:var(--success)">Ans: ${w.a}</span></div>`);
+    }
+}
+
+function toggleReview() {
+    const r = document.getElementById('reviewArea');
+    r.style.display = (r.style.display === "none" || r.style.display === "") ? "block" : "none";
+}
+
+function showScene(id) {
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// Background Particles
+const canvas = document.getElementById('particles-js');
+const ctx = canvas.getContext('2d');
+let pts = [];
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+class P {
+    constructor() { this.reset(); }
+    reset() { this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2+1; this.vx=(Math.random()-0.5)*0.5; this.vy=(Math.random()-0.5)*0.5; }
+    update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height) this.reset(); }
+    draw() { ctx.fillStyle="rgba(139,92,246,0.3)"; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
+}
+for(let i=0;i<50;i++) pts.push(new P());
+function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); pts.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(animate); }
+animate();
+</script>
+</body>
+</html>
