@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mr. Ehab - Final Exam 7127 (Randomized + Typable Drag & Drop)</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1; --accent: #ef4444; --success: #10b981; 
+            --danger: #ef4444; --bg-dark: #020617; --gold: #ffb142;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; position: relative; overflow-x: hidden; }
+
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        .main-card { 
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); 
+            width: 100%; max-width: 1000px; border-radius: 40px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); 
+            overflow: hidden; position: relative; z-index: 2; margin: 20px 0;
+        }
+
+        .quiz-header { padding: 25px 40px; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid var(--danger); flex-wrap: wrap; gap: 15px; }
+        .logo-container { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--danger); overflow: hidden; background: #000; box-shadow: 0 0 15px var(--danger); }
+        .logo-img { width: 100%; height: 100%; object-fit: cover; }
+        .header-text { text-align: left; }
+        .animated-name { background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.2rem; }
+
+        .section-divider { margin: 50px 0 30px 0; display: flex; align-items: center; justify-content: center; }
+        .divider-line { height: 2px; flex-grow: 1; background: linear-gradient(90deg, transparent, var(--danger), transparent); }
+        .divider-badge {
+            display: flex; align-items: center; gap: 15px;
+            background: rgba(239, 68, 68, 0.15);
+            padding: 10px 30px; border-radius: 50px;
+            border: 1px solid var(--danger);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            color: white; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px;
+        }
+        .divider-logo { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--gold); }
+
+        .question-row { 
+            background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 25px; 
+            margin-bottom: 25px; 
+            border: 2px solid transparent;
+            transition: 0.4s ease-in-out; direction: ltr; 
+        }
+        .question-row:hover, .question-row.has-selection { 
+            border-color: var(--danger); 
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            transform: scale(1.02);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .question-text { font-size: 1.15rem; font-weight: 700; color: #f8fafc; margin-bottom: 15px; display: block; text-align: left; line-height: 1.6; }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; direction: ltr; }
+        .option-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .option-box:hover { background: rgba(239, 68, 68, 0.15); border-color: var(--danger); }
+        .selected-option { border-color: var(--danger) !important; background: rgba(239, 68, 68, 0.3) !important; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+
+        .dialog-container { background: rgba(0, 0, 0, 0.3); border-radius: 30px; padding: 25px; margin-bottom: 30px; direction: ltr; display: flex; flex-direction: column; gap: 15px; border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.4s; }
+        .dialog-container:hover { border-color: var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+        
+        .chat-bubble { padding: 15px; border-radius: 20px; position: relative; max-width: 100%; line-height: 1.5; margin-bottom: 10px; }
+        .zain-bubble { background: rgba(59, 130, 246, 0.2); border-left: 5px solid #3b82f6; }
+        .laila-bubble { background: rgba(16, 185, 129, 0.2); border-right: 5px solid #10b981; }
+        .speaker-tag { font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; display: block; opacity: 0.9; }
+        .intro-dialogue { background: rgba(255, 193, 7, 0.2); border-radius: 20px; padding: 12px; text-align: center; color: #ffb142; font-weight: bold; margin-bottom: 20px; border-right: 3px solid #ffb142; }
+
+        .passage-box { background: #0f172a; padding: 25px; border-radius: 25px; border-left: 5px solid transparent; line-height: 1.8; text-align: left; direction: ltr; margin-bottom: 30px; font-size: 1.1rem; transition: 0.4s; }
+        .passage-box:hover { border-left-color: var(--danger); background: #1e1b4b; }
+
+        .btn { background: linear-gradient(135deg, #ef4444, #991b1b); color: white; padding: 16px 40px; border: none; border-radius: 18px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 20px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+        .submit-btn { background: linear-gradient(135deg, #10b981, #059669); width: 80%; margin: 30px auto; display: block; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+
+        .scene { display: none; padding: 40px; text-align: center; }
+        .active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        
+        input[type="text"] { width: 80%; padding: 15px; border-radius: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--danger); color: white; text-align: center; font-size: 1.2rem; margin-bottom: 20px; outline: none; }
+        .score-badge { font-size: 1.8rem; margin: 20px 0; color: var(--gold); font-weight: 900; }
+        
+        .result-buttons { display: flex; gap: 20px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+        .review-btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .restart-btn { background: linear-gradient(135deg, #ef4444, #991b1b); }
+        .correct-review { background-color: rgba(16, 185, 129, 0.25) !important; border: 2px solid #10b981 !important; }
+        .wrong-review { background-color: rgba(239, 68, 68, 0.25) !important; border: 2px solid #ef4444 !important; }
+        
+        .drag-area { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: center; direction: ltr; }
+        .drag-word { display: inline-block; background: var(--danger); padding: 8px 16px; margin: 5px; border-radius: 40px; cursor: pointer; transition: 0.2s; font-weight: bold; }
+        .drag-word:hover { transform: scale(1.05); background: #ff5e5e; }
+        .drop-zone { background: rgba(255,255,255,0.05); border: 2px dashed rgba(239,68,68,0.5); border-radius: 16px; padding: 8px 12px; margin: 5px 0; display: inline-block; min-width: 120px; text-align: center; color: var(--gold); font-weight: bold; cursor: pointer; }
+        .drop-filled { background: rgba(16,185,129,0.2); border-color: #10b981; color: white; }
+        .drop-zone-input { background: transparent; border: none; color: white; text-align: center; font-weight: bold; width: 100%; outline: none; }
+        .review-question { margin-bottom: 20px; padding: 15px; border-radius: 20px; transition: 0.2s; }
+        .typing-hint { font-size: 0.7rem; color: #aaa; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<div class="main-card">
+    <div class="quiz-header">
+        <div class="logo-container">
+            <img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200" class="logo-img">
+        </div>
+        <div class="header-text">
+            <h1 style="color:white">ثالث اعدادي ترم ثاني - اختبار كامل (ايهاب العدوي)</h1>
+            <span class="animated-name">Designed by / Mr. Ehab Eladawy </span>
+        </div>
+    </div>
+
+    <div id="welcome-scene" class="scene active">
+        <img src="https://drive.google.com/thumbnail?id=1cF-j-60otMztzK5ruWOGf02aem5WUG7R&sz=w600" style="width:200px; margin-bottom:20px;">
+        <h2 style="color:var(--gold); margin-bottom:20px;">English Language Test - 3rd Prep</h2>
+        <input type="text" id="studentName" placeholder="Enter Your Full Name">
+        <br>
+        <button class="btn" onclick="startExam()">Start Exam 🚀</button>
+    </div>
+
+    <div id="quiz-scene" class="scene">
+        <div id="quiz-content"></div>
+        <button class="btn submit-btn" onclick="finishExam()">تسليم الاختبار 📌</button>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <h2 id="resHeader">Congratulations!</h2>
+        <div id="result-container"></div>
+        <div id="scoreDisplay" class="score-badge"></div>
+        <div class="result-buttons">
+            <button class="btn review-btn" onclick="reviewFullExam()"><i class="fas fa-eye"></i> مراجعة الاختبار كاملاً</button>
+            <button class="btn restart-btn" onclick="location.reload()"><i class="fas fa-redo-alt"></i> إعادة الاختبار</button>
+        </div>
+        <div id="reviewPanel" style="margin-top: 30px; display: none; text-align: right;"></div>
+    </div>
+</div>
+
+<script>
+const myLogo = "https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200";
+let studentAnswers = {};
+let dragDropAnswers = {0: null, 1: null, 2: null, 3: null};
+let dialogAnswers = {};
+let totalQuestionsCount = 0;
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// ---------- BASE QUESTIONS (with specific modifications) ----------
+const baseVocabQs = [
+    { q: "The view from the mountain top was absolutely breathtaking. The synonym of 'breathtaking' is '....................'", options: ["ordinary", "challenging", "amazing", "smooth"], correct: "amazing" },
+    { q: "A/An .................... is a safe place that protects you from danger or bad weather.", options: ["riddle", "clue", "shelter", "survival"], correct: "shelter" },
+    { q: "The coach's .................... for his players encouraged them to work harder.", options: ["praise", "result", "injury", "opponent"], correct: "praise" },
+    { q: "We must .................... the environment when building new factories.", options: ["think", "consider", "build", "start"], correct: "consider" }
+];
+
+const baseReadingQs = [
+    { q: "The main idea of the text is that the fennec fox ....................", options: ["eats insects and birds", "has special body parts to survive", "lives in forests", "drinks a lot of water"], correct: "has special body parts to survive" },
+    { q: "The fennec fox hunts ....................", options: ["in the morning", "during the day", "at night", "in winter"], correct: "at night" },
+    { q: "The fennec fox gets most of its .................... from food because water is scarce.", options: ["energy", "heat", "moisture", "fur"], correct: "moisture" }
+];
+
+const baseStoryQs = [
+    { q: "The real identity of the 'sea monster' is a/an ....................", options: ["pirate ship", "whale", "submarine", "sea creature"], correct: "submarine" },
+    { q: ".................... is the Canadian harpooner aboard the expedition.", options: ["Aronnax", "Nemo", "Conseil", "Ned Land"], correct: "Ned Land" },
+    { q: "The Nautilus sometimes travels beneath .................... creating dangerous situations.", options: ["forests", "ice", "mountains", "deserts"], correct: "ice" },
+    { q: "Captain Nemo hides details about his .................... from the companions.", options: ["wealth", "past", "knowledge", "crew"], correct: "past" }
+];
+
+// MODIFIED REWRITE: As soon as I had met Adel, I got the news.
+const baseRewriteQs = [
+    { q: "I visited London in 2023. (ago)", options: ["I visited London ago 2023.", "I visited London since 2023 ago.", "I visited London two years ago.", "I visited London 2023 ago."], correct: "I visited London two years ago." },
+    { q: "'Why will you sell your car?' said Amin. (asked)", options: ["Amin asked why will you sell your car.", "Amin asked why I would sell my car.", "Amin asked why would you sell your car.", "Amin asked why you will sell your car."], correct: "Amin asked why I would sell my car." },
+    { q: "I didn't get the news until I had met Adel. (As soon as)", options: ["As soon as I had met Adel, I got the news.", "As soon as I meet Adel, I got the news.", "As soon as I met Adel, I had got the news.", "As soon as I had met Adel, I had got the news."], correct: "As soon as I had met Adel, I got the news." }
+];
+
+// MODIFIED Correct Form: replace "has stopped" with "has stopping" as wrong option
+const baseCorrectFormQs = [
+    { q: "Reem .................... (uses) to play tennis.", options: ["use", "used", "using", "uses"], correct: "used" },
+    { q: "The boy .................... (who) dog ran away is my neighbor.", options: ["who", "which", "whose", "whom"], correct: "whose" },
+    { q: "The GPS .................... (stop) working because we hadn't charged the battery.", options: ["stops", "stopped", "has stopping", "stop"], correct: "stopped" }
+];
+
+// MODIFIED DIALOGUE: changes as requested
+const baseDialogueExchanges = [
+    { speaker: "Omar", text: "What does a team leader do, Rania?" },
+    { speaker: "Rania", text: "(1) ....................................................................", options: ["A team leader helps people work together and organizes tasks.", "Team leaders just give orders.", "They only check the results.", "I don't know."], correct: "A team leader helps people work together and organizes tasks." },
+    { speaker: "Omar", text: "Do they make everyone feel included?" },
+    { speaker: "Rania", text: "(2) ....................................................................", options: ["Yes, they do. They make sure everyone feels part of the team.", "No, they ignore members.", "Sometimes but not always.", "Only the strong members."], correct: "Yes, they do. They make sure everyone feels part of the team." },
+    { speaker: "Omar", text: "(3) .................................................................... to make Everyone feel part of the team?", options: ["Why is that important", "What is a team leader", "Where do they work", "When do they meet"], correct: "Why is that important" },  // removed question marks inside options
+    { speaker: "Rania", text: "to feel included." },  // changed from "Yes, they listen to every idea."
+    { speaker: "Omar", text: "What should they do if they face problems?" },
+    { speaker: "Rania", text: "(4) ....................................................................", options: ["They should solve problems calmly and discuss solutions with the team.", "They should shout at the team.", "They should quit.", "They should ignore the problems."], correct: "They should solve problems calmly and discuss solutions with the team." },
+    { speaker: "Omar", text: "(5) .................................................................... ?", options: ["What do they say to motivate the team", "How much do they earn", "Where do they meet", "When is the meeting"], correct: "What do they say to motivate the team" },
+    { speaker: "Rania", text: "They say to the team, 'Let's do our best together!'" }
+];
+
+const fullPassage = "The fennec fox is a small desert animal that lives in North Africa. It has the largest ears of any fox! These ears help it lose heat and stay cool in the hot desert. Its fur is thick and light-colored, which protects it from the sun during the day and keeps it warm during freezing cold nights. The fennec fox sleeps in an underground hole during the day and comes out at night to hunt. It eats insects and birds. Because water is scarce, it gets most of its moisture from food. Scientists asked how such a tiny animal survives in such harsh conditions. They found that every part of its body is a perfect adaptation. The fennec fox is a true master of desert life.";
+
+const dragCorrectOrder = ["ceremony", "decorations", "identity", "customs"];
+
+let vocabQs = [], readingQs = [], storyQs = [], rewriteQs = [], correctFormQs = [], dialogueExchanges = [];
+
+function randomizeAllQuestions() {
+    vocabQs = baseVocabQs.map(q => ({ ...q, options: shuffleArray([...q.options]) }));
+    readingQs = baseReadingQs.map(q => ({ ...q, options: shuffleArray([...q.options]) }));
+    storyQs = baseStoryQs.map(q => ({ ...q, options: shuffleArray([...q.options]) }));
+    rewriteQs = baseRewriteQs.map(q => ({ ...q, options: shuffleArray([...q.options]) }));
+    correctFormQs = baseCorrectFormQs.map(q => ({ ...q, options: shuffleArray([...q.options]) }));
+    dialogueExchanges = baseDialogueExchanges.map(ex => {
+        if (ex.options) return { ...ex, options: shuffleArray([...ex.options]) };
+        return { ...ex };
+    });
+}
+
+function createDivider(title) {
+    return `<div class="section-divider"><div class="divider-line"></div><div class="divider-badge"><img src="${myLogo}" class="divider-logo"><span>${title}</span><img src="${myLogo}" class="divider-logo"></div><div class="divider-line"></div></div>`;
+}
+
+function genQ(i, prefix, q) {
+    const key = `${prefix}_${i}`;
+    return `<div class="question-row" id="row_${key}">
+        <span class="question-text">${q.q}</span>
+        <div class="options-grid">
+            ${q.options.map(opt => `<div class="option-box" onclick="selAns('${key}', '${opt.replace(/'/g, "\\'")}', this)"><i class="fa-regular fa-circle"></i> ${opt}</div>`).join('')}
+        </div>
+    </div>`;
+}
+
+function startExam() {
+    if(document.getElementById('studentName').value.length < 3) return alert("Please enter your name!");
+    randomizeAllQuestions();
+    studentAnswers = {};
+    dragDropAnswers = {0: null, 1: null, 2: null, 3: null};
+    dialogAnswers = {};
+    document.getElementById('welcome-scene').classList.remove('active');
+    document.getElementById('quiz-scene').classList.add('active');
+    renderExam();
+    window.scrollTo(0,0);
+}
+
+// Drag & Drop with typing capability
+function renderDragDropSlot(slotIndex, placeholderText) {
+    return `<span class="drop-zone" id="drop${slotIndex}" style="display:inline-flex; flex-direction:column; align-items:center;">
+                <span id="dropText${slotIndex}" class="drop-text" style="min-width:100px;">______</span>
+                <input type="text" id="dropInput${slotIndex}" class="drop-zone-input" placeholder="اكتب هنا..." style="width:100px; font-size:0.8rem; margin-top:4px; background:#334155; border-radius:8px; padding:4px;" oninput="updateDropText(${slotIndex}, this.value)">
+                <div class="typing-hint">✏️ اكتب أو اسحب</div>
+            </span>`;
+}
+
+function updateDropText(slotIndex, value) {
+    const textSpan = document.getElementById(`dropText${slotIndex}`);
+    if(textSpan) {
+        textSpan.innerText = value || "______";
+        if(value.trim() !== "") {
+            dragDropAnswers[slotIndex] = value.trim();
+            document.getElementById(`drop${slotIndex}`).classList.add('drop-filled');
+        } else {
+            dragDropAnswers[slotIndex] = null;
+            document.getElementById(`drop${slotIndex}`).classList.remove('drop-filled');
+        }
+    }
+}
+
+function allowDrop(e) { e.preventDefault(); }
+function dragStart(e, word) { e.dataTransfer.setData("text/plain", word); }
+function dropOnSlot(e, slotIndex) {
+    e.preventDefault();
+    const word = e.dataTransfer.getData("text/plain");
+    dragDropAnswers[slotIndex] = word;
+    const textSpan = document.getElementById(`dropText${slotIndex}`);
+    if(textSpan) textSpan.innerText = word;
+    const inputField = document.getElementById(`dropInput${slotIndex}`);
+    if(inputField) inputField.value = word;
+    const dropZone = document.getElementById(`drop${slotIndex}`);
+    if(dropZone) dropZone.classList.add('drop-filled');
+}
+
+function renderExam() {
+    let html = "";
+    html += createDivider("VOCABULARY (A.1)");
+    vocabQs.forEach((q, i) => html += genQ(i, 'v', q));
+    
+    html += createDivider("READING COMPLETION (A.2) - Drag & Drop + كتابة");
+    html += `<div class="drag-area" id="dragArea">
+                <div style="margin-bottom:10px;">اسحب الكلمة أو اكتبها في المربع: (identity - ceremony - customs - decorations - clues)</div>
+                <div id="wordsContainer">
+                    ${['identity', 'ceremony', 'customs', 'decorations', 'clues'].map(w => `<span class="drag-word" draggable="true" ondragstart="dragStart(event, '${w}')">${w}</span>`).join('')}
+                </div>
+                <div style="margin-top:20px; text-align:right; background:rgba(0,0,0,0.3); padding:15px; border-radius:20px;">
+                    Festivals around the world celebrate traditions that are connected to history and culture. The (1) ${renderDragDropSlot(0)} often includes performances and telling stories about the society. Streets light up with (2) ${renderDragDropSlot(1)} that bring joy and excitement, and tourists are drawn to the massive events. These gatherings reflect harmony and show the (3) ${renderDragDropSlot(2)} of the region beautifully. Everyone enjoys learning about the society's (4) ${renderDragDropSlot(3)}.
+                </div>
+            </div>`;
+    
+    html += createDivider("READING COMPREHENSION (Fennec Fox - A.3)");
+    html += `<div class="passage-box">${fullPassage}</div>`;
+    readingQs.forEach((q, i) => html += genQ(i, 'r', q));
+    
+    html += createDivider("THE STORY (20,000 LEAGUES - B)");
+    storyQs.forEach((q, i) => html += genQ(i, 'st', q));
+    
+    html += createDivider("REWRITE (C)");
+    rewriteQs.forEach((q, i) => html += genQ(i, 'rw', q));
+    
+    html += createDivider("CORRECT FORM (D)");
+    correctFormQs.forEach((q, i) => html += genQ(i, 'cf', q));
+    
+    html += createDivider("COMPLETE THE DIALOG (E)");
+    html += `<div class="intro-dialogue"><i class="fas fa-comments"></i> Rania thinks a team leader helps people work together.</div>`;
+    html += `<div class="dialog-container">`;
+    let dIdx = 0;
+    dialogueExchanges.forEach((ex) => {
+        const isOmar = ex.speaker === "Omar";
+        html += `<div class="chat-bubble ${isOmar ? 'zain-bubble' : 'laila-bubble'}">
+                    <span class="speaker-tag">${ex.speaker}</span>
+                    <div>${ex.text}</div>`;
+        if(ex.options) {
+            html += `<div class="options-grid" style="margin-top:10px;">
+                        ${ex.options.map(opt => `<div class="option-box" onclick="selDialogAns(${dIdx}, '${opt.replace(/'/g, "\\'")}', this)"><i class="fa-regular fa-circle"></i> ${opt}</div>`).join('')}
+                    </div>`;
+            dialogAnswers[dIdx] = { correct: ex.correct, selected: null, questionText: ex.text };
+            dIdx++;
+        }
+        html += `</div>`;
+    });
+    html += `</div>`;
+    
+    document.getElementById('quiz-content').innerHTML = html;
+    totalQuestionsCount = vocabQs.length + readingQs.length + storyQs.length + rewriteQs.length + correctFormQs.length + Object.keys(dialogAnswers).length + 4;
+}
+
+function selAns(key, val, el) {
+    studentAnswers[key] = val;
+    const parentRow = document.getElementById('row_' + key);
+    if(parentRow) parentRow.classList.add('has-selection');
+    const container = el.parentElement;
+    container.querySelectorAll('.option-box').forEach(b => b.classList.remove('selected-option'));
+    el.classList.add('selected-option');
+}
+
+function selDialogAns(idx, val, el) {
+    dialogAnswers[idx].selected = val;
+    const containerDiv = el.closest('.dialog-container');
+    if(containerDiv) containerDiv.classList.add('has-selection');
+    el.parentElement.querySelectorAll('.option-box').forEach(b => b.classList.remove('selected-option'));
+    el.classList.add('selected-option');
+}
+
+function isAllQuestionsAnswered() {
+    let answered = 0;
+    for(let i=0;i<vocabQs.length;i++) if(studentAnswers[`v_${i}`]) answered++;
+    for(let i=0;i<readingQs.length;i++) if(studentAnswers[`r_${i}`]) answered++;
+    for(let i=0;i<storyQs.length;i++) if(studentAnswers[`st_${i}`]) answered++;
+    for(let i=0;i<rewriteQs.length;i++) if(studentAnswers[`rw_${i}`]) answered++;
+    for(let i=0;i<correctFormQs.length;i++) if(studentAnswers[`cf_${i}`]) answered++;
+    for(let k in dialogAnswers) if(dialogAnswers[k].selected) answered++;
+    for(let s=0;s<4;s++) if(dragDropAnswers[s] && dragDropAnswers[s].trim() !== "") answered++;
+    return answered === totalQuestionsCount;
+}
+
+function finishExam() {
+    if(!isAllQuestionsAnswered()) {
+        alert("⚠️ أنهي الاختبار بالكامل - لقد تركت بعض الأسئلة! الرجاء الإجابة على جميع الأسئلة قبل التسليم.");
+        return;
+    }
+    let score = 0;
+    vocabQs.forEach((q, i) => { if(studentAnswers[`v_${i}`] === q.correct) score++; });
+    readingQs.forEach((q, i) => { if(studentAnswers[`r_${i}`] === q.correct) score++; });
+    storyQs.forEach((q, i) => { if(studentAnswers[`st_${i}`] === q.correct) score++; });
+    rewriteQs.forEach((q, i) => { if(studentAnswers[`rw_${i}`] === q.correct) score++; });
+    correctFormQs.forEach((q, i) => { if(studentAnswers[`cf_${i}`] === q.correct) score++; });
+    Object.keys(dialogAnswers).forEach(k => { if(dialogAnswers[k].selected === dialogAnswers[k].correct) score++; });
+    for(let i=0;i<4;i++) if(dragDropAnswers[i] === dragCorrectOrder[i]) score++;
+    
+    const total = totalQuestionsCount;
+    const pct = (score/total)*100;
+    
+    document.getElementById('quiz-scene').classList.remove('active');
+    document.getElementById('result-scene').classList.add('active');
+    document.getElementById('scoreDisplay').innerHTML = `Your Score: ${score} / ${total} (${Math.round(pct)}%)`;
+    if(pct >= 50) {
+        canvasConfetti({ particleCount: 150, spread: 70 });
+        document.getElementById('result-container').innerHTML = `<img src="https://drive.google.com/thumbnail?id=1yHlVcO1402weXdOCm7Ao6v7cd0mmRffM&sz=w800" style="width:100%; border-radius:20px;">`;
+    } else {
+        document.getElementById('resHeader').innerText = "Try Harder Next Time!";
+    }
+}
+
+function reviewFullExam() {
+    const panel = document.getElementById('reviewPanel');
+    panel.style.display = 'block';
+    let reviewHtml = "<h3 style='color:gold; margin-bottom:20px;'>📋 مراجعة كاملة للاختبار</h3>";
+    function getReviewClass(user, correct) { return (user === correct) ? "correct-review" : "wrong-review"; }
+    reviewHtml += `<h4 style="color:#f97316;">✏️ Vocabulary</h4>`;
+    vocabQs.forEach((q,i) => { let u = studentAnswers[`v_${i}`]||"لم تجب"; let cls=getReviewClass(u,q.correct); reviewHtml+=`<div class="${cls}"><strong>${q.q}</strong><br>✅ ${q.correct}<br>📝 ${u}</div>`; });
+    reviewHtml += `<h4 style="color:#f97316;">📖 Reading Completion</h4>`;
+    for(let i=0;i<4;i++) { let u = dragDropAnswers[i]||"فارغ"; let cls=getReviewClass(u,dragCorrectOrder[i]); reviewHtml+=`<div class="${cls}"><strong>الفراغ ${i+1}</strong><br>✅ ${dragCorrectOrder[i]}<br>📝 ${u}</div>`; }
+    reviewHtml += `<h4 style="color:#f97316;">📖 Fennec Fox</h4>`;
+    readingQs.forEach((q,i)=>{ let u=studentAnswers[`r_${i}`]||"لم تجب"; reviewHtml+=`<div class="${getReviewClass(u,q.correct)}"><strong>${q.q}</strong><br>✅ ${q.correct}<br>📝 ${u}</div>`; });
+    reviewHtml += `<h4 style="color:#f97316;">🐋 20,000 Leagues</h4>`;
+    storyQs.forEach((q,i)=>{ let u=studentAnswers[`st_${i}`]||"لم تجب"; reviewHtml+=`<div class="${getReviewClass(u,q.correct)}"><strong>${q.q}</strong><br>✅ ${q.correct}<br>📝 ${u}</div>`; });
+    reviewHtml += `<h4 style="color:#f97316;">✍️ Rewrite</h4>`;
+    rewriteQs.forEach((q,i)=>{ let u=studentAnswers[`rw_${i}`]||"لم تجب"; reviewHtml+=`<div class="${getReviewClass(u,q.correct)}"><strong>${q.q}</strong><br>✅ ${q.correct}<br>📝 ${u}</div>`; });
+    reviewHtml += `<h4 style="color:#f97316;">✅ Correct Form</h4>`;
+    correctFormQs.forEach((q,i)=>{ let u=studentAnswers[`cf_${i}`]||"لم تجب"; reviewHtml+=`<div class="${getReviewClass(u,q.correct)}"><strong>${q.q}</strong><br>✅ ${q.correct}<br>📝 ${u}</div>`; });
+    reviewHtml += `<h4 style="color:#f97316;">💬 Dialogue</h4>`;
+    Object.keys(dialogAnswers).forEach(k=>{ let u=dialogAnswers[k].selected||"لم تجب"; let c=dialogAnswers[k].correct; reviewHtml+=`<div class="${getReviewClass(u,c)}"><strong>الفراغ ${parseInt(k)+1}</strong><br>✅ ${c}<br>📝 ${u}</div>`; });
+    panel.innerHTML = reviewHtml;
+    panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+particlesJS("particles-js", { "particles": { "number": { "value": 50 }, "color": { "value": "#ef4444" }, "opacity": { "value": 0.3 }, "move": { "enable": true, "speed": 1.5 } } });
+</script>
+</body>
+</html>
