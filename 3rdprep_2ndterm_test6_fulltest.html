@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mr. Ehab - Exam 5</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1; --accent: #ef4444; --success: #10b981; 
+            --danger: #ef4444; --bg-dark: #020617; --gold: #ffb142;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; position: relative; overflow-x: hidden; }
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .main-card { 
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); 
+            width: 100%; max-width: 1000px; border-radius: 40px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); 
+            overflow: hidden; position: relative; z-index: 2; margin: 20px 0;
+        }
+        .quiz-header { padding: 25px 40px; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid var(--danger); flex-wrap: wrap; gap: 15px; }
+        .logo-container { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--danger); overflow: hidden; background: #000; box-shadow: 0 0 15px var(--danger); }
+        .logo-img { width: 100%; height: 100%; object-fit: cover; }
+        .header-text { text-align: left; }
+        .animated-name { background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.2rem; }
+        .section-divider { margin: 50px 0 30px 0; display: flex; align-items: center; justify-content: center; }
+        .divider-line { height: 2px; flex-grow: 1; background: linear-gradient(90deg, transparent, var(--danger), transparent); }
+        .divider-badge { display: flex; align-items: center; gap: 15px; background: rgba(239, 68, 68, 0.15); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); color: white; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; }
+        .divider-logo { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--gold); }
+        
+        .question-row { 
+            background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 25px; 
+            margin-bottom: 25px; border: 2px solid transparent;
+            transition: 0.4s ease-in-out; direction: ltr; 
+        }
+        .question-row.has-selection { border-color: var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+        .question-text { font-size: 1.15rem; font-weight: 700; color: #f8fafc; margin-bottom: 15px; display: block; text-align: left; line-height: 1.6; }
+        
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; direction: ltr; }
+        .option-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        
+        .correct-ans { background: rgba(16, 185, 129, 0.3) !important; border-color: var(--success) !important; }
+        .wrong-ans { background: rgba(239, 68, 68, 0.3) !important; border-color: var(--danger) !important; }
+        .feedback-msg { margin-top: 12px; font-weight: bold; font-size: 0.95rem; text-align: left; }
+        .feedback-correct { color: var(--success); }
+        .feedback-wrong { color: var(--danger); }
+
+        .selected-option { border-color: var(--danger) !important; background: rgba(239, 68, 68, 0.3) !important; }
+        .passage-box { background: #0f172a; padding: 25px; border-radius: 25px; border-right: 5px solid transparent; line-height: 1.8; text-align: left; direction: ltr; margin-bottom: 30px; font-size: 1.1rem; }
+
+        /* Dialogue Styles */
+        .dialogue-container { background: #0f172a; padding: 25px; border-radius: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); direction: ltr; text-align: left; }
+        .msg { margin-bottom: 15px; padding: 10px 15px; border-radius: 15px; display: inline-block; max-width: 80%; line-height: 1.4; }
+        .amal { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border-left: 4px solid var(--primary); }
+        .ahlam { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-left: 4px solid var(--danger); margin-left: 20%; }
+
+        .drop-zone {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 130px; height: 35px; background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(239, 68, 68, 0.4); border-radius: 10px;
+            margin: 0 5px; vertical-align: middle; transition: 0.3s;
+        }
+        .drop-input {
+            width: 100%; background: transparent; border: none; color: var(--gold);
+            text-align: center; font-weight: bold; font-size: 1.1rem; outline: none; padding: 0 5px;
+        }
+
+        .btn { background: linear-gradient(135deg, #ef4444, #991b1b); color: white; padding: 16px 40px; border: none; border-radius: 18px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 20px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+        .submit-btn { background: linear-gradient(135deg, #10b981, #059669); width: 80%; margin: 30px auto; display: block; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .scene { display: none; padding: 40px; text-align: center; }
+        .active { display: block; animation: fadeIn 0.5s ease; }
+        input[type="text"].main-input { width: 80%; padding: 15px; border-radius: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--danger); color: white; text-align: center; font-size: 1.2rem; margin-bottom: 20px; outline: none; }
+        .score-badge { font-size: 1.8rem; margin: 20px 0; color: var(--gold); font-weight: 900; }
+        .drag-area { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: center; direction: ltr; }
+        .drag-word { display: inline-block; background: var(--danger); padding: 8px 18px; margin: 5px; border-radius: 40px; cursor: grab; transition: 0.2s; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="main-card">
+    <div class="quiz-header">
+        <div class="logo-container"><img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200" class="logo-img"></div>
+        <div class="header-text"><h1 style="color:white">Exam (5) - Prep 3 Second Term</h1><span class="animated-name">Designed by / Mr. Ehab Eladawy</span></div>
+    </div>
+    
+    <div id="welcome-scene" class="scene active">
+        <img src="https://drive.google.com/thumbnail?id=1cF-j-60otMztzK5ruWOGf02aem5WUG7R&sz=w600" style="width:200px; margin-bottom:20px;">
+        <h2 style="color:var(--gold); margin-bottom:20px;">English Final Revision - Test 5</h2>
+        <input type="text" id="studentName" class="main-input" placeholder="Enter Your Full Name">
+        <br><button class="btn" onclick="startExam()">Start Exam 🚀</button>
+    </div>
+
+    <div id="quiz-scene" class="scene">
+        <div id="quiz-content"></div>
+        <button class="btn submit-btn" onclick="finishExam()">تسليم الاختبار 📌</button>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <div id="result-container"></div>
+        <div id="scoreDisplay" class="score-badge"></div>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn" style="background: #6366f1;" onclick="reviewFullExam()">مراجعة الاختبار 🔍</button>
+            <button class="btn" onclick="location.reload()">إعادة الاختبار 🔄</button>
+        </div>
+        <div id="review-content" style="margin-top: 40px;"></div>
+    </div>
+</div>
+
+<script>
+const myLogo = "https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200";
+let studentAnswers = {};
+let dragDropAnswers = {0: "", 1: "", 2: "", 3: ""};
+
+// Store shuffled options per question key so they stay consistent during the exam
+const shuffledOptionsCache = {};
+
+function shuffle(array) {
+    let curr = array.length, rand;
+    while (curr != 0) {
+        rand = Math.floor(Math.random() * curr);
+        curr--;
+        [array[curr], array[rand]] = [array[rand], array[curr]];
+    }
+    return array;
+}
+
+const vocabQs = [
+    { q: "Some animals have large ........... to help them walk in deserts or on ice.", options: ["paws", "feathers", "humps", "ears"], correct: "paws" },
+    { q: "They built an immense statue in the center of the city. The antonym of 'immense' is '...........'.", options: ["huge", "sustainable", "tiny", "obvious"], correct: "tiny" },
+    { q: "His greatest achievement was winning the race. The suffix '-ment' in 'achievement' is used to form a/an '...........'.", options: ["verb", "adjective", "adverb", "noun"], correct: "noun" },
+    { q: "A/An ........... is an animal that hunts and eats other animals.", options: ["adaptation", "migration", "predator", "conservation"], correct: "predator" }
+];
+
+const dragWords = ["competition", "do", "athletes", "keep", "make"];
+const dragCorrectOrder = ["athletes", "competition", "make", "keep"];
+
+const readingPassage = `Nour noticed that her study group was losing energy before exams. Some members felt they couldn't succeed. Instead of ignoring this, she decided to act. She set goals with the group: "Let's learn five words a day." She broke big lessons into steps so nothing felt too hard. Every evening, she welcomed questions and gave kind feedback. She never made anyone feel small for not knowing something. When Ali said he felt tired, she showed empathy and suggested a short break. Her vision was that everyone could improve with support. She told the group to keep trying, even after small mistakes. Because of her motivated attitude and willingness to help, the whole team passed their tests with better grades than before.`;
+
+const readingQs = [
+    { q: "The main idea of the passage is '...........'.", options: ["exams are very difficult", "study groups need breaks", "encouraging leaders", "only smart students pass tests"], correct: "encouraging leaders" },
+    { q: "Nour told the group to ...........", options: ["stop studying", "keep trying", "ask the teacher", "work alone"], correct: "keep trying" },
+    { q: "Because of Nour's help and motivation, the study group ...........", options: ["repeated the tests", "recorded the lessons", "got better grades", "stopped studying"], correct: "got better grades" },
+    { q: "How many new words did the group learn each day?", options: ["Two words", "Three words", "Four words", "Five words"], correct: "Five words" },
+    { q: "How did Ali probably feel after Nour suggested a break?", options: ["Relieved and supported", "Angry and sad", "Ignored", "Worse than before"], correct: "Relieved and supported" },
+    { q: "What did Nour do to help her study group?", options: ["She ignored their mistakes", "She broke lessons into steps", "She made the tests easier", "She gave them the answers"], correct: "She broke lessons into steps" }
+];
+
+const storyQs = [
+    { q: "The travelers explored a/an ........... using diving suits.", options: ["sunken airport", "underwater forest", "deep-sea volcano", "ice palace"], correct: "underwater forest" },
+    { q: "They visited ........... that hints at lost civilizations.", options: ["Troy", "Rome", "a sunken city", "Egypt"], correct: "a sunken city" },
+    { q: "Conseil is loyal to Aronnax and ........... throughout the voyage.", options: ["questions Nemo", "records marine life", "helps Aronnax", "fights warships"], correct: "helps Aronnax" },
+    { q: "During their underwater journeys, Aronnax and his companions explored ...........", options: ["deserts and forests", "castles and caves", "mountains and rivers", "coral reefs and sunken cities"], correct: "coral reefs and sunken cities" },
+    { q: "Why is Ned Land unhappy despite seeing the ocean's beauty?", options: ["He misses his family and land", "He wants to hunt the squid", "He hates Aronnax", "He wants to be the captain"], correct: "He misses his family and land" },
+    { q: "Why was Aronnax excited while Ned Land was frustrated?", options: ["Aronnax loved science; Ned wanted freedom", "Ned loved the sea; Aronnax hated it", "They both wanted to stay", "Captain Nemo was Ned's friend"], correct: "Aronnax loved science; Ned wanted freedom" }
+];
+
+const rewriteQs = [
+    { q: "My brother decided not to eat fast food. (avoided)", options: ["My brother avoided eating fast food.", "My brother avoided to eat fast food.", "My brother avoided eat fast food.", "My brother avoided for eating fast food."], correct: "My brother avoided eating fast food." },
+    { q: "\"How do animals stay cool in summer?\" they asked. (inquired)", options: ["They inquired how animals stayed cool in summer.", "They inquired how do animals stay cool.", "They inquired if animals stay cool.", "They inquired that animals stay cool."], correct: "They inquired how animals stay cool in summer." },
+    { q: "I returned home after finishing my work. (had finished)", options: ["I returned home after I had finished my work.", "After I returned home I had finished work.", "I had finished home after I returned.", "I had finished my work before returning."], correct: "I returned home after I had finished my work." }
+];
+
+const correctFormQs = [
+    { q: "Ahmed used to play football when he ........... (is) young.", options: ["is", "was", "were", "been"], correct: "was" },
+    { q: "This is the street ........... (when) I first learned to ride my bicycle.", options: ["when", "where", "which", "who"], correct: "where" },
+    { q: "They refused ........... (share) their snacks.", options: ["share", "to share", "sharing", "shared"], correct: "to share" }
+];
+
+const dialogueQs = [
+    { q: "Ahlam: (1) ...........?", options: ["What should we do for the project?", "Where are the penguins?", "How are you today?", "Can you help me with homework?"], correct: "What should we do for the project?" },
+    { q: "Ahlam: (2) ...........?", options: ["What should we include in the project?", "Why choose penguins?", "Where do they live?", "Are they funny?"], correct: "What should we include in the project?" },
+    { q: "Amal: (3) ........... .", options: ["That's a great idea!", "I don't like facts.", "Penguins eat fish.", "No, let's write about lions."], correct: "That's a great idea!" },
+    { q: "Amal: (4) ........... .", options: ["Yes, that would be helpful.", "No, models are boring.", "I don't have a model.", "We can buy one."], correct: "Yes, that would be helpful." },
+    { q: "Ahlam: (5) ........... .", options: ["Let's start working on it now!", "Goodbye Amal.", "I'm tired.", "The project is hard."], correct: "Let's start working on it now!" }
+];
+
+function getShuffledOptions(key, options) {
+    if (!shuffledOptionsCache[key]) {
+        shuffledOptionsCache[key] = shuffle([...options]);
+    }
+    return shuffledOptionsCache[key];
+}
+
+function genQ(i, prefix, q, isReview = false) {
+    const key = `${prefix}_${i}`;
+    const userAns = studentAnswers[key];
+    const isCorrect = userAns === q.correct;
+    
+    // Always use shuffled options (cached so order stays consistent during exam)
+    let currentOptions = isReview ? [...q.options] : getShuffledOptions(key, q.options);
+
+    let optionsHtml = currentOptions.map(opt => {
+        let cls = "option-box";
+        if (!isReview && userAns === opt) cls += " selected-option";
+        if (isReview) {
+            if (opt === q.correct) cls += " correct-ans";
+            else if (opt === userAns && userAns !== q.correct) cls += " wrong-ans";
+        }
+        return `<div class="${cls}" ${!isReview ? `onclick="selAns('${key}', '${opt.replace(/'/g, "\\'")}', this)"` : ''}><i class="fa-regular ${opt === userAns ? 'fa-circle-dot' : 'fa-circle'}"></i> ${opt}</div>`;
+    }).join('');
+
+    let feedback = "";
+    if(isReview) {
+        feedback = isCorrect ? 
+            `<div class="feedback-msg feedback-correct">✅ Correct Answer</div>` : 
+            `<div class="feedback-msg feedback-wrong">❌ Incorrect - Correct is: ${q.correct}</div>`;
+    }
+
+    return `<div class="question-row ${userAns ? 'has-selection' : ''}" id="row_${key}">
+        <span class="question-text">${q.q}</span>
+        <div class="options-grid">${optionsHtml}</div>
+        ${feedback}
+    </div>`;
+}
+
+function selAns(key, val, el) {
+    studentAnswers[key] = val;
+    el.parentElement.parentElement.classList.add('has-selection');
+    el.parentElement.querySelectorAll('.option-box').forEach(b => b.classList.remove('selected-option'));
+    el.classList.add('selected-option');
+}
+
+function startExam() {
+    if(document.getElementById('studentName').value.length < 3) return alert("Please enter your name!");
+    document.getElementById('welcome-scene').classList.remove('active');
+    document.getElementById('quiz-scene').classList.add('active');
+    renderExam();
+}
+
+function renderExam(targetId = 'quiz-content', isReview = false) {
+    let html = "";
+    const section = (title) => `<div class="section-divider"><div class="divider-line"></div><div class="divider-badge"><img src="${myLogo}" class="divider-logo"><span>${title}</span><img src="${myLogo}" class="divider-logo"></div><div class="divider-line"></div></div>`;
+    
+    html += section("1. VOCABULARY");
+    vocabQs.forEach((q, i) => html += genQ(i, 'v', q, isReview));
+
+    html += section("2. READ AND COMPLETE");
+    if(!isReview) {
+        const sw = shuffle([...dragWords]);
+        html += `<div class="drag-area"><div>${sw.map(w => `<span class="drag-word" draggable="true" ondragstart="event.dataTransfer.setData('text', '${w}')">${w}</span>`).join('')}</div>
+        <div style="margin-top:20px; text-align:left; background:rgba(0,0,0,0.3); padding:25px; border-radius:25px; line-height:2.5; direction:ltr;">
+            The school sports day was full of activity and energy. Some (1) 
+            <span class="drop-zone"><input type="text" class="drop-input" placeholder="..." oninput="dragDropAnswers[0]=this.value"></span> 
+            felt nervous before their final event. They knew they had practiced hard for weeks leading up to the (2) 
+            <span class="drop-zone"><input type="text" class="drop-input" placeholder="..." oninput="dragDropAnswers[1]=this.value"></span> . 
+            The children tried to (3) 
+            <span class="drop-zone"><input type="text" class="drop-input" placeholder="..." oninput="dragDropAnswers[2]=this.value"></span> 
+            new friends during the break between races. Their supportive coaches encouraged them to (4) 
+            <span class="drop-zone"><input type="text" class="drop-input" placeholder="..." oninput="dragDropAnswers[3]=this.value"></span> 
+            a positive attitude regardless of بغض النظر عن the final score.
+        </div></div>`;
+    } else {
+        html += `<div class="question-row" style="direction:ltr; text-align:left;">
+            <p>1. ${dragDropAnswers[0].toLowerCase().trim() === dragCorrectOrder[0] ? '✅' : '❌'} Your: ${dragDropAnswers[0] || 'None'} | Correct: ${dragCorrectOrder[0]}</p>
+            <p>2. ${dragDropAnswers[1].toLowerCase().trim() === dragCorrectOrder[1] ? '✅' : '❌'} Your: ${dragDropAnswers[1] || 'None'} | Correct: ${dragCorrectOrder[1]}</p>
+            <p>3. ${dragDropAnswers[2].toLowerCase().trim() === dragCorrectOrder[2] ? '✅' : '❌'} Your: ${dragDropAnswers[2] || 'None'} | Correct: ${dragCorrectOrder[2]}</p>
+            <p>4. ${dragDropAnswers[3].toLowerCase().trim() === dragCorrectOrder[3] ? '✅' : '❌'} Your: ${dragDropAnswers[3] || 'None'} | Correct: ${dragCorrectOrder[3]}</p>
+        </div>`;
+    }
+
+    html += section("3. READING COMPREHENSION");
+    html += `<div class="passage-box">${readingPassage}</div>`;
+    readingQs.forEach((q, i) => html += genQ(i, 'r', q, isReview));
+
+    html += section("4. THE STORY");
+    storyQs.forEach((q, i) => html += genQ(i, 'st', q, isReview));
+
+    html += section("5. REWRITE");
+    rewriteQs.forEach((q, i) => html += genQ(i, 'rw', q, isReview));
+
+    html += section("6. CORRECT FORM");
+    correctFormQs.forEach((q, i) => html += genQ(i, 'cf', q, isReview));
+
+    html += section("7. DIALOGUE");
+    html += `<div class="dialogue-container">
+        <div class="msg amal"><b>Amal:</b> We have to do a project about animals.</div>
+        <div class="msg ahlam"><b>Ahlam:</b> I know! (1) ...........?</div>
+        <div class="msg amal"><b>Amal:</b> We should choose penguins. They are funny.</div>
+        <div class="msg ahlam"><b>Ahlam:</b> (2) ...........?</div>
+        <div class="msg amal"><b>Amal:</b> We should include pictures of where they live.</div>
+        <div class="msg ahlam"><b>Ahlam:</b> How about writing facts about what they eat?</div>
+        <div class="msg amal"><b>Amal:</b> (3) ........... .</div>
+        <div class="msg ahlam"><b>Ahlam:</b> Should we make a model for it?</div>
+        <div class="msg amal"><b>Amal:</b> (4) ........... .</div>
+        <div class="msg ahlam"><b>Ahlam:</b> (5) ........... .</div>
+    </div>`;
+    dialogueQs.forEach((q, i) => html += genQ(i, 'd', q, isReview));
+
+    document.getElementById(targetId).innerHTML = html;
+}
+
+function finishExam() {
+    let score = 0;
+    vocabQs.forEach((q, i) => { if(studentAnswers[`v_${i}`] === q.correct) score++; });
+    for(let i=0;i<4;i++) { if(dragDropAnswers[i].toLowerCase().trim() === dragCorrectOrder[i]) score++; }
+    readingQs.forEach((q, i) => { if(studentAnswers[`r_${i}`] === q.correct) score++; });
+    storyQs.forEach((q, i) => { if(studentAnswers[`st_${i}`] === q.correct) score++; });
+    rewriteQs.forEach((q, i) => { if(studentAnswers[`rw_${i}`] === q.correct) score++; });
+    correctFormQs.forEach((q, i) => { if(studentAnswers[`cf_${i}`] === q.correct) score++; });
+    dialogueQs.forEach((q, i) => { if(studentAnswers[`d_${i}`] === q.correct) score++; });
+
+    document.getElementById('quiz-scene').classList.remove('active');
+    document.getElementById('result-scene').classList.add('active');
+    document.getElementById('scoreDisplay').innerHTML = `Your Score: ${score} / 31`;
+    if(score >= 16) canvasConfetti({ particleCount: 150, spread: 70 });
+}
+
+function reviewFullExam() {
+    renderExam('review-content', true);
+    document.getElementById('review-content').scrollIntoView({ behavior: 'smooth' });
+}
+
+particlesJS("particles-js", { "particles": { "number": { "value": 40 }, "color": { "value": "#ef4444" }, "move": { "speed": 1.5 } } });
+</script>
+</body>
+</html>
