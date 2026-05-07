@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mr. Ehab - Exam 1 (Prep 1 Plus)</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1; --accent: #ef4444; --success: #10b981; 
+            --danger: #ef4444; --bg-dark: #020617; --gold: #ffb142;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: white; position: relative; overflow-x: hidden; }
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .main-card { 
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); 
+            width: 100%; max-width: 1000px; border-radius: 40px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); 
+            overflow: hidden; position: relative; z-index: 2; margin: 20px 0;
+        }
+        .quiz-header { padding: 25px 40px; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid var(--danger); flex-wrap: wrap; gap: 15px; }
+        .logo-container { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--danger); overflow: hidden; background: #000; box-shadow: 0 0 15px var(--danger); }
+        .logo-img { width: 100%; height: 100%; object-fit: cover; }
+        .header-text { text-align: left; }
+        .animated-name { background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.2rem; }
+        .section-divider { margin: 50px 0 30px 0; display: flex; align-items: center; justify-content: center; }
+        .divider-line { height: 2px; flex-grow: 1; background: linear-gradient(90deg, transparent, var(--danger), transparent); }
+        .divider-badge { display: flex; align-items: center; gap: 15px; background: rgba(239, 68, 68, 0.15); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); color: white; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; }
+        .divider-logo { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--gold); }
+        
+        .question-row { 
+            background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 25px; 
+            margin-bottom: 25px; border: 2px solid transparent;
+            transition: 0.4s ease-in-out; direction: ltr; 
+        }
+        .question-row.has-selection { border-color: var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+        .question-text { font-size: 1.15rem; font-weight: 700; color: #f8fafc; margin-bottom: 15px; display: block; text-align: left; line-height: 1.6; }
+        
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; direction: ltr; }
+        .option-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        
+        .correct-ans { background: rgba(16, 185, 129, 0.3) !important; border-color: var(--success) !important; }
+        .wrong-ans { background: rgba(239, 68, 68, 0.3) !important; border-color: var(--danger) !important; }
+        .feedback-msg { margin-top: 12px; font-weight: bold; font-size: 0.95rem; text-align: left; }
+        .feedback-correct { color: var(--success); }
+        .feedback-wrong { color: var(--danger); }
+
+        .selected-option { border-color: var(--danger) !important; background: rgba(239, 68, 68, 0.3) !important; }
+        .passage-box { background: #0f172a; padding: 25px; border-radius: 25px; border-right: 5px solid transparent; line-height: 1.8; text-align: left; direction: ltr; margin-bottom: 30px; font-size: 1.1rem; }
+
+        .dialogue-container { background: #0f172a; padding: 25px; border-radius: 25px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); direction: ltr; text-align: left; }
+        .msg { margin-bottom: 15px; padding: 10px 15px; border-radius: 15px; display: inline-block; max-width: 80%; line-height: 1.4; }
+        .ali { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border-left: 4px solid var(--primary); }
+        .samy { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-left: 4px solid var(--danger); margin-left: 20%; }
+
+        .drop-zone {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 130px; height: 35px; background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(239, 68, 68, 0.4); border-radius: 10px;
+            margin: 0 5px; vertical-align: middle; transition: 0.3s;
+        }
+        .drop-zone.drag-over { background: rgba(239, 68, 68, 0.2); border-style: solid; }
+        .drop-input {
+            width: 100%; background: transparent; border: none; color: var(--gold);
+            text-align: center; font-weight: bold; font-size: 1.1rem; outline: none; padding: 0 5px;
+        }
+
+        .btn { background: linear-gradient(135deg, #ef4444, #991b1b); color: white; padding: 16px 40px; border: none; border-radius: 18px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 20px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+        .submit-btn { background: linear-gradient(135deg, #10b981, #059669); width: 80%; margin: 30px auto; display: block; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .scene { display: none; padding: 40px; text-align: center; }
+        .active { display: block; animation: fadeIn 0.5s ease; }
+        input[type="text"].main-input { width: 80%; padding: 15px; border-radius: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--danger); color: white; text-align: center; font-size: 1.2rem; margin-bottom: 20px; outline: none; }
+        .score-badge { font-size: 1.8rem; margin: 20px 0; color: var(--gold); font-weight: 900; }
+        .drag-area { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: center; direction: ltr; }
+        .drag-word { display: inline-block; background: var(--danger); padding: 8px 18px; margin: 5px; border-radius: 40px; cursor: grab; transition: 0.2s; font-weight: bold; color: white; }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="main-card">
+    <div class="quiz-header">
+        <div class="logo-container"><img src="https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200" class="logo-img"></div>
+        <div class="header-text"><h1 style="color:white">Prep 1 Plus - Second Term (Test 1)</h1><span class="animated-name">Designed by / Mr. Ehab Eladawy</span></div>
+    </div>
+    
+    <div id="welcome-scene" class="scene active">
+        <img src="https://drive.google.com/thumbnail?id=1cF-j-60otMztzK5ruWOGf02aem5WUG7R&sz=w600" style="width:200px; margin-bottom:20px;">
+        <h2 style="color:var(--gold); margin-bottom:20px;">English Level Plus - Final Exam</h2>
+        <input type="text" id="studentName" class="main-input" placeholder="Enter Your Full Name">
+        <br><button class="btn" onclick="startExam()">Start Exam 🚀</button>
+    </div>
+
+    <div id="quiz-scene" class="scene">
+        <div id="quiz-content"></div>
+        <button class="btn submit-btn" onclick="finishExam()">تسليم الاختبار 📌</button>
+    </div>
+
+    <div id="result-scene" class="scene">
+        <div id="result-container"></div>
+        <div id="scoreDisplay" class="score-badge"></div>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn" style="background: #6366f1;" onclick="reviewFullExam()">مراجعة الاختبار 🔍</button>
+            <button class="btn" onclick="location.reload()">إعادة الاختبار 🔄</button>
+        </div>
+        <div id="review-content" style="margin-top: 40px;"></div>
+    </div>
+</div>
+
+<script>
+const myLogo = "https://drive.google.com/thumbnail?id=1y4dyG-9kLmoeIaoDev-wFFq5-U8EopB5&sz=w200";
+let studentAnswers = {};
+let dragDropAnswers = {0: "", 1: "", 2: "", 3: ""};
+const shuffledOptionsCache = {};
+
+function shuffle(array) {
+    let curr = array.length, rand;
+    while (curr != 0) {
+        rand = Math.floor(Math.random() * curr);
+        curr--;
+        [array[curr], array[rand]] = [array[rand], array[curr]];
+    }
+    return array;
+}
+
+// 1. VOCABULARY
+const vocabQs = [
+    { q: "I bought a T-shirt as ........... for my friend.", options: ["souvenir", "recipe", "meal", "hobby"], correct: "souvenir" },
+    { q: "A/An ............ is a person who studies animal behavior.", options: ["oculist", "ethologist", "firefighter", "pilot"], correct: "ethologist" },
+    { q: "Many passengers are on the ............ waiting for the metro.", options: ["park", "pavement", "platform", "river"], correct: "platform" }
+];
+
+// 2. READ AND COMPLETE
+const dragWords = ["metals", "oldest", "water", "small", "sculptures"];
+const dragCorrectOrder = ["small", "sculptures", "metals", "oldest"];
+
+// 3. READING COMPREHENSION
+const readingPassage = `A hunter went hunting in the jungle. He was with his loyal dog. As they were passing through the forest, they saw a snake and mongoose fighting. The hunter and his faithful dog stood there and watched their fight. The battle of snake and mongoose was becoming fierce, the hunter wanted to stop it. So he shot the mongoose aiming at him with his gun. Shortly thereafter, his dog ran to the dead mongoose. The dog lifted the mongoose into his mouth. But then the snake bit him. As a result, the dog died there. The hunter then thought, "I did wrong by killing the mongoose. My enemy was the snake and not the mongoose." In this way, the hunter had to pay a heavy price for his wrong decision.`;
+
+const readingQs = [
+    { q: "The underlined pronoun 'they' refers to the ............", options: ["dogs", "mongooses", "hunter and dog", "hunters"], correct: "hunter and dog" },
+    { q: "The snake and the mongoose were ............", options: ["playing", "fighting", "singing", "sleeping"], correct: "fighting" },
+    { q: "What was the hunter doing in the jungle?", options: ["He was planting trees", "He was hunting with his dog", "He was swimming in the river", "He was looking for gold"], correct: "He was hunting with his dog" },
+    { q: "Why did the hunter shoot the mongoose?", options: ["Because it attacked him", "Because he wanted to stop the fight", "Because he wanted to eat it", "Because it bit his dog"], correct: "Because he wanted to stop the fight" },
+    { q: "What is the moral of the story?", options: ["Never go to the jungle", "Always think carefully before taking any decision", "Dogs are not loyal", "Snakes are friendly animals"], correct: "Always think carefully before taking any decision" },
+    { q: "What would happen if the hunter shot the snake instead?", options: ["The mongoose would bite the dog", "The dog might have survived", "The hunter would die", "The dog would run away"], correct: "The dog might have survived" }
+];
+
+// 4. GRAMMAR
+const grammarQs = [
+    { q: "She said that she ............ buy a tablet.", options: ["isn't", "won't", "doesn't", "didn't"], correct: "didn't" },
+    { q: "I have been living in this house ............ 2020.", options: ["in", "at", "for", "since"], correct: "since" },
+    { q: "In the past, letters ............ carried by men on horses.", options: ["is", "were", "was", "has"], correct: "were" }
+];
+
+// 5. CORRECT THE FORM
+const correctFormQs = [
+    { q: "She (told) ............ that she was very happy.", options: ["tells", "telling", "said", "say"], correct: "said" },
+    { q: "They (play) ............ for two hours this morning.", options: ["played", "have been playing", "plays", "playing"], correct: "have been playing" },
+    { q: "Ali is the boy (which) ............ saved the girl.", options: ["who", "whose", "where", "when"], correct: "who" },
+    { q: "Mobile phones (make) ............ in Japan.", options: ["made", "are made", "is making", "makes"], correct: "are made" }
+];
+
+// 6. DIALOGUE
+const dialogueQs = [
+    { q: "Samy: (1) ............", options: ["I am going to the club.", "I am going to school.", "I am staying home.", "I am going to the park."], correct: "I am going to the club." },
+    { q: "Ali: (2) ............?", options: ["I don't like pizza", "What are you going to do there?", "When will you come back?", "Who is with you?"], correct: "What are you going to do there?" },
+    { q: "Samy: (3) ............ everyday practice is good for my body", options: ["No, I don't.", "Yes, I do.", "Sometimes I do.", "I play it twice a week."], correct: "Yes, I do." },
+    { q: "Ali: Yes, of course. (4) ............?", options: ["What other sports do you play?", "Do you like football?", "Is tennis hard?", "Where is the club?"], correct: "What other sports do you play?" }
+];
+
+// 7. THE NOVEL (Prince and the Pauper)
+const storyQs = [
+    { q: "Who said: 'Bring me my meal'?", options: ["The Judge", "Edward", "Miles", "Tom"], correct: "Edward" },
+    { q: "Who said: 'No, he didn't. I am your brother! And this is my home!'?", options: ["Edward", "Arthur", "Miles", "Tom Canty"], correct: "Miles" },
+    { q: "Who said: 'I will punish you both'?", options: ["The Judge", "The Constable", "Arthur", "John Canty"], correct: "The Judge" },
+    { q: "What did Miles tell Edward about during the meal?", options: ["About his family and why he left home", "About the King's death", "About the city of London", "About his adventures in France"], correct: "About his family and why he left home" },
+    { q: "When did Miles leave the country to France as a soldier?", options: ["Ten years ago", "Five years ago", "Two years ago", "Last month"], correct: "Ten years ago" },
+    { q: "What did Arthur do after his brother Miles left the country?", options: ["He looked for him", "He told their father Miles was dead to take his money", "He became a soldier too", "He helped the poor people"], correct: "He told their father Miles was dead to take his money" }
+];
+
+function getShuffledOptions(key, options) {
+    if (!shuffledOptionsCache[key]) shuffledOptionsCache[key] = shuffle([...options]);
+    return shuffledOptionsCache[key];
+}
+
+function genQ(i, prefix, q, isReview = false) {
+    const key = `${prefix}_${i}`;
+    const userAns = studentAnswers[key];
+    const isCorrect = userAns === q.correct;
+    let currentOptions = isReview ? [...q.options] : getShuffledOptions(key, q.options);
+
+    let optionsHtml = currentOptions.map(opt => {
+        let cls = "option-box";
+        if (!isReview && userAns === opt) cls += " selected-option";
+        if (isReview) {
+            if (opt === q.correct) cls += " correct-ans";
+            else if (opt === userAns && userAns !== q.correct) cls += " wrong-ans";
+        }
+        return `<div class="${cls}" ${!isReview ? `onclick="selAns('${key}', '${opt.replace(/'/g, "\\'")}', this)"` : ''}><i class="fa-regular ${opt === userAns ? 'fa-circle-dot' : 'fa-circle'}"></i> ${opt}</div>`;
+    }).join('');
+
+    let feedback = isReview ? (isCorrect ? `<div class="feedback-msg feedback-correct">✅ Correct</div>` : `<div class="feedback-msg feedback-wrong">❌ Correct is: ${q.correct}</div>`) : "";
+
+    return `<div class="question-row ${userAns ? 'has-selection' : ''}" id="row_${key}">
+        <span class="question-text">${q.q}</span>
+        <div class="options-grid">${optionsHtml}</div>
+        ${feedback}
+    </div>`;
+}
+
+function selAns(key, val, el) {
+    studentAnswers[key] = val;
+    el.parentElement.parentElement.classList.add('has-selection');
+    el.parentElement.querySelectorAll('.option-box').forEach(b => b.classList.remove('selected-option'));
+    el.classList.add('selected-option');
+}
+
+function startExam() {
+    if(document.getElementById('studentName').value.length < 3) return alert("Please enter your name!");
+    document.getElementById('welcome-scene').classList.remove('active');
+    document.getElementById('quiz-scene').classList.add('active');
+    renderExam();
+}
+
+function renderExam(targetId = 'quiz-content', isReview = false) {
+    let html = "";
+    const section = (title) => `<div class="section-divider"><div class="divider-line"></div><div class="divider-badge"><img src="${myLogo}" class="divider-logo"><span>${title}</span><img src="${myLogo}" class="divider-logo"></div><div class="divider-line"></div></div>`;
+    
+    html += section("1. CHOOSE THE CORRECT ANSWER");
+    vocabQs.forEach((q, i) => html += genQ(i, 'v', q, isReview));
+
+    html += section("2. READ AND COMPLETE");
+    if(!isReview) {
+        html += `<div class="drag-area"><div>${shuffle([...dragWords]).map(w => `<span class="drag-word" draggable="true" ondragstart="drag(event)">${w}</span>`).join('')}</div>
+        <div style="margin-top:20px; text-align:left; background:rgba(0,0,0,0.3); padding:25px; border-radius:25px; line-height:2.5; direction:ltr;">
+            A sculpture is a 3D model of something. It can be big or (1) <span class="drop-zone" ondrop="drop(event, 0)" ondragover="allowDrop(event)"><input type="text" class="drop-input" oninput="dragDropAnswers[0]=this.value" id="input_0"></span>. 
+            People have made (2) <span class="drop-zone" ondrop="drop(event, 1)" ondragover="allowDrop(event)"><input type="text" class="drop-input" oninput="dragDropAnswers[1]=this.value" id="input_1"></span> of animals for thousands of years. 
+            They have used stone and expensive (3) <span class="drop-zone" ondrop="drop(event, 2)" ondragover="allowDrop(event)"><input type="text" class="drop-input" oninput="dragDropAnswers[2]=this.value" id="input_2"></span> like gold to make sculptures of animals. 
+            One of the (4) <span class="drop-zone" ondrop="drop(event, 3)" ondragover="allowDrop(event)"><input type="text" class="drop-input" oninput="dragDropAnswers[3]=this.value" id="input_3"></span> animal sculptures is 40,000 years old!
+        </div></div>`;
+    } else {
+        html += `<div class="question-row" style="direction:ltr; text-align:left;">`;
+        dragCorrectOrder.forEach((ans, i) => {
+            let uAns = dragDropAnswers[i] || "None";
+            html += `<p>${uAns.toLowerCase().trim() === ans ? '✅' : '❌'} (Part ${i+1}): Your: <b>${uAns}</b> | Correct: <span style="color:var(--success)">${ans}</span></p>`;
+        });
+        html += `</div>`;
+    }
+
+    html += section("3. READING COMPREHENSION");
+    html += `<div class="passage-box">${readingPassage}</div>`;
+    readingQs.forEach((q, i) => html += genQ(i, 'r', q, isReview));
+
+    html += section("4. GRAMMAR");
+    grammarQs.forEach((q, i) => html += genQ(i, 'g', q, isReview));
+
+    html += section("5. CORRECT THE FORM");
+    correctFormQs.forEach((q, i) => html += genQ(i, 'cf', q, isReview));
+
+    html += section("6. DIALOGUE");
+    html += `<div class="dialogue-container">
+        <div class="msg ali"><b>Ali:</b> Where are you going?</div>
+        <div class="msg samy"><b>Samy:</b> (1) ............</div>
+        <div class="msg ali"><b>Ali:</b> (2) ............?</div>
+        <div class="msg samy"><b>Samy:</b> I am going to play tennis.</div>
+        <div class="msg ali"><b>Ali:</b> Do you play tennis every day?</div>
+        <div class="msg samy"><b>Samy:</b> (3) ............ everyday practice is good for my body</div>
+        <div class="msg ali"><b>Ali:</b> Yes, of course. (4) ............?</div>
+        <div class="msg samy"><b>Samy:</b> I play cricket and volleyball.</div>
+    </div>`;
+    dialogueQs.forEach((q, i) => html += genQ(i, 'd', q, isReview));
+
+    html += section("7. THE NOVEL (The Prince and the Pauper)");
+    storyQs.forEach((q, i) => html += genQ(i, 'st', q, isReview));
+
+    document.getElementById(targetId).innerHTML = html;
+}
+
+// Drag and Drop Corrected Functions
+function allowDrop(ev) {
+    ev.preventDefault();
+    ev.currentTarget.classList.add('drag-over');
+}
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.innerText);
+}
+function drop(ev, idx) {
+    ev.preventDefault();
+    ev.currentTarget.classList.remove('drag-over');
+    var data = ev.dataTransfer.getData("text");
+    document.getElementById('input_' + idx).value = data;
+    dragDropAnswers[idx] = data;
+}
+
+function finishExam() {
+    let score = 0;
+    const total = vocabQs.length + 4 + readingQs.length + grammarQs.length + correctFormQs.length + dialogueQs.length + storyQs.length;
+    vocabQs.forEach((q, i) => { if(studentAnswers[`v_${i}`] === q.correct) score++; });
+    dragCorrectOrder.forEach((ans, i) => { if((dragDropAnswers[i]||"").toLowerCase().trim() === ans) score++; });
+    readingQs.forEach((q, i) => { if(studentAnswers[`r_${i}`] === q.correct) score++; });
+    grammarQs.forEach((q, i) => { if(studentAnswers[`g_${i}`] === q.correct) score++; });
+    correctFormQs.forEach((q, i) => { if(studentAnswers[`cf_${i}`] === q.correct) score++; });
+    dialogueQs.forEach((q, i) => { if(studentAnswers[`d_${i}`] === q.correct) score++; });
+    storyQs.forEach((q, i) => { if(studentAnswers[`st_${i}`] === q.correct) score++; });
+
+    document.getElementById('quiz-scene').classList.remove('active');
+    document.getElementById('result-scene').classList.add('active');
+    document.getElementById('scoreDisplay').innerHTML = `Your Score: ${score} / ${total}`;
+    if(score >= total/2) canvasConfetti({ particleCount: 150, spread: 70 });
+}
+
+function reviewFullExam() {
+    renderExam('review-content', true);
+    document.getElementById('review-content').scrollIntoView({ behavior: 'smooth' });
+}
+
+particlesJS("particles-js", { "particles": { "number": { "value": 40 }, "color": { "value": "#ef4444" }, "move": { "speed": 1.5 } } });
+</script>
+</body>
+</html>
